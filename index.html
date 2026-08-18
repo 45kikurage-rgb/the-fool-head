@@ -425,6 +425,26 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
+
+<style id="quest-number-a-pattern">
+/* 個人版 v1.3 / Aパターン：白塗り＋黒太縁 */
+.quest-number,.quest-num,.questNumber,[data-quest-number]{
+  position:absolute !important;
+  left:50% !important;
+  bottom:12% !important;
+  transform:translateX(-50%) !important;
+  font-size:28px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  color:#fff !important;
+  -webkit-text-stroke:3px #000 !important;
+  paint-order:stroke fill !important;
+  text-shadow:none !important;
+  z-index:5 !important;
+  pointer-events:none !important;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1074,6 +1094,6 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 /* THE fool head 個人版 v1.3: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
-  .num:not(.done)::before{font-size:36px !important;}
+  .num:not(.done)::before{font-size:28px !important;}
 }
 </style>
