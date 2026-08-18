@@ -7,6 +7,7 @@ const MAX_TEXT = 20000;
 
 function defaultPayload() {
   return {
+    memo: "",
     fields: Array.from({ length: DEFAULT_FIELDS }, (_, i) => ({
       id: crypto.randomUUID(),
       name: `フィールド${i + 1}`,
@@ -43,7 +44,8 @@ function validatePayload(input) {
     return { id, name, text };
   });
 
-  return { fields, updatedAt: new Date().toISOString() };
+  const memo = String(input?.memo ?? "").slice(0, 5000);
+  return { memo, fields, updatedAt: new Date().toISOString() };
 }
 
 export class ClipboardRoom extends DurableObject {

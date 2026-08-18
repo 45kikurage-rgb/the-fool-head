@@ -1,4 +1,4 @@
-const CACHE='the-fool-head-personal-v2.1';
+const CACHE='the-fool-head-personal-v2.4';
 const ASSETS=['./','./index.html','./manifest.json','./icon-any.png','./icon-maskable.png','./quest_icon_chest.png'];
 
 self.addEventListener('install',event=>{
