@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="冒険の書">
-<link rel="manifest" href="./manifest.json?v=1.2">
+<link rel="manifest" href="./manifest.json?v=2.0">
 <title>冒険の書</title>
 <style>
 :root{
@@ -108,7 +108,7 @@ th,td{padding:8px;border-bottom:1px solid #d8e0e5;text-align:right;white-space:n
 th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-child{text-align:left}
 .pos{color:#08782a;font-weight:900}.neg{color:#c62828;font-weight:900}
 .bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,100%);
- display:grid;grid-template-columns:repeat(2,1fr);gap:5px;background:rgba(255,255,255,.96);padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+ display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:rgba(255,255,255,.96);padding:8px 10px calc(8px + env(safe-area-inset-bottom));
  border-top:3px solid var(--line);z-index:12}
 .navbtn{border:3px solid var(--line);border-radius:14px;background:white;padding:9px 3px;font-weight:1000}
 .navbtn.active{background:#111;color:#fff;border-color:#111}
@@ -423,6 +423,145 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   scroll-snap-stop:always;
 }
 
+
+/* ===== 個人版 v2.1: 共有クリップボード / 端末モード ===== */
+.hidden{display:none !important}
+.clipboard-toolbar{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+  margin:8px 0;
+}
+.clip-status{
+  font-size:12px;
+  font-weight:900;
+  color:var(--muted);
+  text-align:center;
+  margin:6px 0 2px;
+}
+.clip-status.ok{color:#08782a}
+.clip-status.err{color:#c62828}
+.clip-field{
+  background:#fff;
+  border:3px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  margin-top:10px;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.clip-field-head{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:7px;
+}
+.clip-field-name{
+  flex:1;
+  min-width:0;
+  border:2px solid var(--line);
+  border-radius:10px;
+  padding:7px 9px;
+  background:#fffdf2;
+  font-weight:1000;
+}
+.clip-field-delete{
+  flex:none;
+  width:38px;
+  height:38px;
+  border:2px solid var(--line);
+  border-radius:10px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-weight:1000;
+}
+.clip-text{
+  width:100%;
+  min-height:118px;
+  resize:vertical;
+  border:3px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  font-size:15px;
+  line-height:1.45;
+  background:#fff;
+}
+.clip-actions{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-top:7px;
+}
+.clip-actions button{
+  border:2px solid var(--line);
+  border-radius:10px;
+  padding:8px 4px;
+  background:var(--panel);
+  font-weight:1000;
+}
+.clip-actions .copy-btn{background:#e5f1ff}
+.clip-actions .clear-btn{background:#fee2e2}
+.mode-summary{
+  background:#eef7ff;
+  border:2px solid var(--line);
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.5;
+  margin-top:8px;
+}
+.setup-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(0,0,0,.48);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.setup-modal.show{display:flex}
+.setup-box{
+  width:min(94vw,460px);
+  background:var(--panel);
+  border:4px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 8px 0 rgba(0,0,0,.25);
+}
+.setup-box h2{margin:0 0 8px;font-size:20px}
+.setup-box p{font-size:13px;line-height:1.55;margin:7px 0}
+.share-key-input{
+  width:100%;
+  border:3px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  background:#fff;
+  font-weight:900;
+  margin:7px 0 10px;
+}
+.mode-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.mode-buttons button{
+  border:3px solid var(--line);
+  border-radius:14px;
+  padding:12px 7px;
+  font-weight:1000;
+  background:#fff;
+}
+.mode-buttons button strong{display:block;font-size:16px;margin-bottom:4px}
+.mode-buttons button small{display:block;font-size:11px;line-height:1.35;color:var(--muted)}
+.mode-buttons .main-mode{background:#fff2a8}
+.mode-buttons .sub-mode{background:#dff4ff}
+@media(max-width:430px){
+  .clipboard-toolbar{grid-template-columns:1fr 1fr 1fr;gap:5px}
+  .clipboard-toolbar .action{font-size:13px;padding:9px 3px}
+  .clip-text{min-height:105px;font-size:14px}
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -431,7 +570,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v1.3</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -515,13 +654,45 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
      </div>
    </div>
  </section>
+
+  <section id="clipboardView" class="view">
+    <div class="card">
+      <h2>共有クリップボード</h2>
+      <div class="clipboard-toolbar">
+        <button class="action" id="clipRefreshBtn">最新データ取得</button>
+        <button class="action" id="clipAddBtn">＋ フィールド追加</button>
+        <button class="action" id="showMoreTabsBtn">表示を増やす</button>
+      </div>
+      <div class="clip-status" id="clipStatus">共有キーを設定すると端末間で同期できます</div>
+      <div class="mode-summary" id="modeSummary">起動時は共有のみ表示します。「表示を増やす」でクエスト管理・収支を表示できます。</div>
+    </div>
+    <div id="clipboardFields"></div>
+  </section>
+
 </div>
 
 <nav class="bottomnav">
  <button class="navbtn" data-view="clearView">✓ クエスト管理</button>
  <button class="navbtn active" data-view="financeView">￥ 収支</button>
+ <button class="navbtn" data-view="clipboardView">▣ 共有</button>
  
 </nav>
+
+
+<div class="setup-modal" id="deviceSetupModal">
+  <div class="setup-box">
+    <h2>この端末の使い方</h2>
+    <p>メイン端末では「クエスト管理・収支・共有」を表示します。サブ端末では「共有クリップボード」だけを表示します。</p>
+    <label for="shareKeyInput"><strong>共有キー</strong></label>
+    <input class="share-key-input" id="shareKeyInput" type="password" autocomplete="off" placeholder="8文字以上の自分専用キー">
+    <p>同じ共有キーを自分の端末に設定すると、共有クリップボードだけが同期されます。クエスト管理と収支は同期しません。</p>
+    <div class="mode-buttons">
+      <button class="main-mode" id="chooseMainMode"><strong>メイン端末</strong><small>クエスト・収支・共有</small></button>
+      <button class="sub-mode" id="chooseSubMode"><strong>サブ端末</strong><small>共有のみ</small></button>
+    </div>
+  </div>
+</div>
+
 
 <div class="modal" id="nameModal"><div class="modalbox">
  <h3 id="modalTitle">タブ名</h3><input type="text" id="tabNameInput" maxlength="30" placeholder="例：8月分">
@@ -1042,14 +1213,298 @@ document.getElementById('restoreBtn').onclick=()=>document.getElementById('resto
 document.getElementById('restoreFile').addEventListener('change',async e=>{
  const f=e.target.files?.[0];if(!f)return;
  try{const x=JSON.parse(await f.text());const d=x.data||x;if(!d||!Array.isArray(d.tabs))throw new Error();
-   if(confirm('現在の端末データをバックアップ内容で置き換えますか？')){data=d;if(!data.finance)data.finance={rows:[],fileName:'',importedAt:'',kuukatsu:{}};save();renderClear();setPeriodMode('month');renderFinance();alert('復元しました。')}
+   if(confirm('現在の端末データをバックアップ内容で置き換えますか？')){data=d;if(!data.finance)data.finance={rows:[],fileName:'',importedAt:'',kuukatsu:{}};save();renderClear();setPeriodMode('month');renderFinance();
+setSharedOnlyStartup();alert('復元しました。')}
  }catch(err){alert('バックアップを読み込めませんでした。')} e.target.value='';
 });
+
+
+
+// ===== v2.1: 起動時は共有だけ / 必要時だけ他タブを表示 =====
+let extraTabsVisible=false;
+
+function setSharedOnlyStartup(){
+  extraTabsVisible=false;
+  const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
+  const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
+  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const nav=document.querySelector('.bottomnav');
+  const toggle=document.getElementById('showMoreTabsBtn');
+
+  questBtn?.classList.add('hidden');
+  financeBtn?.classList.add('hidden');
+  shareBtn?.classList.remove('hidden');
+  if(nav)nav.style.gridTemplateColumns='1fr';
+  if(toggle)toggle.textContent='表示を増やす';
+  activateView('clipboardView');
+}
+
+function toggleExtraTabs(){
+  extraTabsVisible=!extraTabsVisible;
+  const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
+  const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
+  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const nav=document.querySelector('.bottomnav');
+  const toggle=document.getElementById('showMoreTabsBtn');
+
+  if(extraTabsVisible){
+    questBtn?.classList.remove('hidden');
+    financeBtn?.classList.remove('hidden');
+    shareBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(3,1fr)';
+    if(toggle)toggle.textContent='共有だけ表示';
+  }else{
+    questBtn?.classList.add('hidden');
+    financeBtn?.classList.add('hidden');
+    if(nav)nav.style.gridTemplateColumns='1fr';
+    if(toggle)toggle.textContent='表示を増やす';
+    activateView('clipboardView');
+  }
+}
+
+// ===== 個人版 v2.1: 端末モード + 共有クリップボード =====
+const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
+const SHARE_KEY_KEY='the_fool_head_share_key_v2';
+const DEFAULT_CLIP_FIELDS=5;
+let clipState={fields:[],updatedAt:''};
+let clipDirty=false;
+let clipSaveTimer=null;
+let clipPollTimer=null;
+
+function makeDefaultClipState(){
+  return {
+    fields:Array.from({length:DEFAULT_CLIP_FIELDS},(_,i)=>({
+      id:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${i}-${Math.random()}`),
+      name:`フィールド${i+1}`,
+      text:''
+    })),
+    updatedAt:''
+  };
+}
+function getDeviceMode(){return localStorage.getItem(DEVICE_MODE_KEY)||''}
+function getShareKey(){return localStorage.getItem(SHARE_KEY_KEY)||''}
+
+function setClipStatus(text,type=''){
+  const el=document.getElementById('clipStatus');
+  if(!el)return;
+  el.textContent=text;
+  el.className='clip-status'+(type?` ${type}`:'');
+}
+function updateModeSummary(){
+  const el=document.getElementById('modeSummary');
+  if(!el)return;
+  el.textContent='起動時は共有のみ表示します。「表示を増やす」でクエスト管理・収支を表示できます。';
+}
+function showDeviceSetup(){
+  const modal=document.getElementById('deviceSetupModal');
+  const input=document.getElementById('shareKeyInput');
+  if(input)input.value=getShareKey();
+  if(modal)modal.classList.add('show');
+}
+function hideDeviceSetup(){
+  document.getElementById('deviceSetupModal')?.classList.remove('show');
+}
+function saveDeviceMode(mode){
+  const key=document.getElementById('shareKeyInput').value.trim();
+  if(key.length<8){
+    alert('共有キーは8文字以上にしてください。');
+    return;
+  }
+  localStorage.setItem(DEVICE_MODE_KEY,mode);
+  localStorage.setItem(SHARE_KEY_KEY,key);
+  hideDeviceSetup();
+  setSharedOnlyStartup();
+}
+function activateView(viewId){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(viewId)?.classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.navbtn[data-view="${viewId}"]`)?.classList.add('active');
+  if(viewId==='financeView')renderFinance();
+  if(viewId==='clipboardView')loadSharedClipboard();
+}
+function applyDeviceMode(forceOpen=false){
+  const mode=getDeviceMode();
+  const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
+  const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
+  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const nav=document.querySelector('.bottomnav');
+  if(!mode){ return; }
+  if(mode==='sub'){
+    questBtn?.classList.add('hidden');
+    financeBtn?.classList.add('hidden');
+    shareBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='1fr';
+    activateView('clipboardView');
+  }else{
+    questBtn?.classList.remove('hidden');
+    financeBtn?.classList.remove('hidden');
+    shareBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(3,1fr)';
+    if(forceOpen)activateView('financeView');
+  }
+  updateModeSummary();
+  startClipPolling();
+}
+function renderClipboardFields(){
+  const wrap=document.getElementById('clipboardFields');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  clipState.fields.forEach((field,index)=>{
+    const card=document.createElement('div');
+    card.className='clip-field';
+    card.innerHTML=`
+      <div class="clip-field-head">
+        <input class="clip-field-name" maxlength="50" value="${esc(field.name||`フィールド${index+1}`)}" aria-label="フィールド名">
+        <button class="clip-field-delete" type="button" title="フィールド削除">×</button>
+      </div>
+      <textarea class="clip-text" maxlength="20000" placeholder="URL・文字列を貼り付け"></textarea>
+      <div class="clip-actions">
+        <button type="button" class="paste-btn">貼り付け</button>
+        <button type="button" class="copy-btn">コピー</button>
+        <button type="button" class="clear-btn">内容削除</button>
+      </div>`;
+    const nameInput=card.querySelector('.clip-field-name');
+    const textarea=card.querySelector('.clip-text');
+    textarea.value=field.text||'';
+
+    nameInput.addEventListener('input',()=>{
+      field.name=nameInput.value;
+      markClipDirtyAndSave();
+    });
+    textarea.addEventListener('input',()=>{
+      field.text=textarea.value;
+      markClipDirtyAndSave();
+    });
+    card.querySelector('.paste-btn').onclick=async()=>{
+      try{
+        const t=await navigator.clipboard.readText();
+        textarea.value=t;
+        field.text=t;
+        markClipDirtyAndSave();
+      }catch(e){
+        textarea.focus();
+        alert('自動貼り付けが許可されていません。入力欄を長押しして貼り付けてください。');
+      }
+    };
+    card.querySelector('.copy-btn').onclick=async()=>{
+      try{
+        await navigator.clipboard.writeText(field.text||'');
+        setClipStatus(`「${field.name||`フィールド${index+1}`}」をコピーしました`,'ok');
+      }catch(e){
+        textarea.focus();textarea.select();
+        document.execCommand?.('copy');
+      }
+    };
+    card.querySelector('.clear-btn').onclick=()=>{
+      if(!field.text || confirm('このフィールドの内容を削除しますか？')){
+        field.text='';
+        textarea.value='';
+        markClipDirtyAndSave();
+      }
+    };
+    card.querySelector('.clip-field-delete').onclick=()=>{
+      if(confirm(`「${field.name||`フィールド${index+1}`}」をフィールドごと削除しますか？`)){
+        clipState.fields.splice(index,1);
+        renderClipboardFields();
+        markClipDirtyAndSave();
+      }
+    };
+    wrap.appendChild(card);
+  });
+}
+function markClipDirtyAndSave(){
+  clipDirty=true;
+  setClipStatus('変更を保存中…');
+  clearTimeout(clipSaveTimer);
+  clipSaveTimer=setTimeout(saveSharedClipboard,600);
+}
+async function clipApi(method,payload){
+  const key=getShareKey();
+  if(key.length<8)throw new Error('共有キーを設定してください');
+  const res=await fetch('/api/clipboard',{
+    method,
+    headers:{
+      'Content-Type':'application/json',
+      'X-Share-Key':key
+    },
+    body:payload?JSON.stringify(payload):undefined,
+    cache:'no-store'
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.error||`通信エラー ${res.status}`);
+  return data;
+}
+async function loadSharedClipboard(silent=false){
+  if(!getShareKey()){
+    if(!silent)showDeviceSetup();
+    return;
+  }
+  if(clipDirty)return;
+  try{
+    if(!silent)setClipStatus('最新データを取得中…');
+    const remote=await clipApi('GET');
+    clipState=remote && Array.isArray(remote.fields)?remote:makeDefaultClipState();
+    renderClipboardFields();
+    setClipStatus(`同期済み${clipState.updatedAt?`：${new Date(clipState.updatedAt).toLocaleString('ja-JP')}`:''}`,'ok');
+  }catch(e){
+    setClipStatus(e.message,'err');
+    if(!clipState.fields.length){
+      clipState=makeDefaultClipState();
+      renderClipboardFields();
+    }
+  }
+}
+async function saveSharedClipboard(){
+  if(!getShareKey())return;
+  try{
+    const payload={
+      fields:clipState.fields.map(f=>({
+        id:String(f.id||''),
+        name:String(f.name||'').slice(0,50),
+        text:String(f.text||'').slice(0,20000)
+      }))
+    };
+    const saved=await clipApi('PUT',payload);
+    clipState=saved;
+    clipDirty=false;
+    renderClipboardFields();
+    setClipStatus(`保存済み：${new Date(saved.updatedAt).toLocaleString('ja-JP')}`,'ok');
+  }catch(e){
+    setClipStatus(e.message,'err');
+  }
+}
+function addClipboardField(){
+  if(clipState.fields.length>=30){
+    alert('フィールドは最大30個です。');
+    return;
+  }
+  clipState.fields.push({
+    id:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`),
+    name:`フィールド${clipState.fields.length+1}`,
+    text:''
+  });
+  renderClipboardFields();
+  markClipDirtyAndSave();
+}
+function startClipPolling(){
+  clearInterval(clipPollTimer);
+  clipPollTimer=setInterval(()=>{
+    const active=document.getElementById('clipboardView')?.classList.contains('active');
+    if(active && !clipDirty)loadSharedClipboard(true);
+  },4000);
+}
+document.getElementById('chooseMainMode').onclick=()=>saveDeviceMode('main');
+document.getElementById('chooseSubMode').onclick=()=>saveDeviceMode('sub');
+document.getElementById('showMoreTabsBtn').onclick=toggleExtraTabs;
+document.getElementById('clipRefreshBtn').onclick=()=>loadSharedClipboard();
+document.getElementById('clipAddBtn').onclick=addClipboardField;
 
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.view).classList.add('active');
  if(b.dataset.view==='financeView')renderFinance();
+ if(b.dataset.view==='clipboardView')loadSharedClipboard();
 });
 document.getElementById('nameModal').onclick=e=>{if(e.target.id==='nameModal')e.currentTarget.classList.remove('show')};
 
@@ -1072,3 +1527,10 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 </body>
 </html>
+<style>
+/* THE fool head 個人版 v2.1: クエスト宝箱アイコン */
+.num.done::after{content:none !important;}
+@media(max-width:430px){
+  .num:not(.done)::before{font-size:28px !important;}
+}
+</style>
