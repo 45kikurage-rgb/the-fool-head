@@ -8,16 +8,16 @@
   "theme_color": "#75c8ff",
   "icons": [
     {
-      "src": "./fool-icon-192.png",
-      "sizes": "192x192",
+      "src": "./icon-any.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./fool-icon-512.png",
+      "src": "./icon-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable"
     }
   ]
 }
