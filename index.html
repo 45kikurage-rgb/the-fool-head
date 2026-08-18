@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.6: 共有クリップボード / 端末モード ===== */
+/* ===== 個人版 v2.7: 共有クリップボード / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.6: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v2.7: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.6: 共有メモ ===== */
+/* ===== 個人版 v2.7: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.6: 手動サーバー転送 ===== */
+/* ===== 個人版 v2.7: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.6: タイトル欄を非input化 ===== */
+/* ===== 個人版 v2.7: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -707,7 +707,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.6</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.7</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -725,7 +725,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
    </div>
  </section>
 
- <section id="financeView" class="view active">
+ <section id="financeView" class="view">
    <div class="card">
      <h2>CSV入力/出力</h2>
      <div class="filebox csv-three-buttons">
@@ -792,7 +792,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
    </div>
  </section>
 
-  <section id="clipboardView" class="view">
+  <section id="clipboardView" class="view active">
 
       <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;">
         <input type="text" name="fake-user" autocomplete="username" tabindex="-1">
@@ -822,8 +822,8 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 <nav class="bottomnav">
  <button class="navbtn" data-view="clearView">✓ クエスト管理</button>
- <button class="navbtn active" data-view="financeView">￥ 収支</button>
- <button class="navbtn" data-view="clipboardView">▣ 共有</button>
+ <button class="navbtn" data-view="financeView">￥ 収支</button>
+ <button class="navbtn active" data-view="clipboardView">▣ 共有</button>
  
 </nav>
 
@@ -1373,7 +1373,48 @@ setClipStatus('端末内データを表示中');alert('復元しました。')}
 
 
 // ===== v2.1: 起動時は共有だけ / 必要時だけ他タブを表示 =====
+const LAST_VIEW_KEY='the_fool_head_last_view_v27';
+const EXTRA_TABS_KEY='the_fool_head_extra_tabs_v27';
 let extraTabsVisible=false;
+
+
+function saveUIState(viewId){
+  if(viewId)localStorage.setItem(LAST_VIEW_KEY,viewId);
+  localStorage.setItem(EXTRA_TABS_KEY,extraTabsVisible?'1':'0');
+}
+
+function restoreLastUIState(){
+  const savedExtra=localStorage.getItem(EXTRA_TABS_KEY)==='1';
+  const savedView=localStorage.getItem(LAST_VIEW_KEY)||'clipboardView';
+
+  const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
+  const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
+  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const nav=document.querySelector('.bottomnav');
+  const toggle=document.getElementById('showMoreTabsBtn');
+
+  extraTabsVisible=savedExtra;
+
+  if(savedExtra){
+    questBtn?.classList.remove('hidden');
+    financeBtn?.classList.remove('hidden');
+    shareBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(3,1fr)';
+    if(toggle)toggle.textContent='共有だけ表示';
+
+    const allowed=['clearView','financeView','clipboardView'];
+    activateView(allowed.includes(savedView)?savedView:'clipboardView');
+  }else{
+    questBtn?.classList.add('hidden');
+    financeBtn?.classList.add('hidden');
+    shareBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='1fr';
+    if(toggle)toggle.textContent='表示を増やす';
+    activateView('clipboardView');
+  }
+  const activeView=document.querySelector('.view.active')?.id || 'clipboardView';
+  saveUIState(activeView);
+}
 
 function setSharedOnlyStartup(){
   extraTabsVisible=false;
@@ -1389,6 +1430,7 @@ function setSharedOnlyStartup(){
   if(nav)nav.style.gridTemplateColumns='1fr';
   if(toggle)toggle.textContent='表示を増やす';
   activateView('clipboardView');
+  saveUIState('clipboardView');
 }
 
 function toggleExtraTabs(){
@@ -1414,7 +1456,7 @@ function toggleExtraTabs(){
   }
 }
 
-// ===== 個人版 v2.6: 端末モード + 共有クリップボード =====
+// ===== 個人版 v2.7: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -1726,10 +1768,14 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
      renderClipboardFields();
    }
  }
+ saveUIState(b.dataset.view);
 });
 document.getElementById('nameModal').onclick=e=>{if(e.target.id==='nameModal')e.currentTarget.classList.remove('show')};
 
 renderClear();setPeriodMode('month');renderFinance();
+if(!loadClipDraft())clipState=makeDefaultClipState();
+renderClipboardFields();
+restoreLastUIState();
 </script>
 
 <script>
@@ -1749,7 +1795,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v2.6: クエスト宝箱アイコン */
+/* THE fool head 個人版 v2.7: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
