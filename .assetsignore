@@ -1,0 +1,22 @@
+# Cloudflare static assets から除外
+node_modules/**
+.git/**
+.github/**
+.wrangler/**
+
+# Worker / build files
+worker.js
+index.js
+wrangler.jsonc
+package.json
+package-lock.json
+bun.lock
+bun.lockb
+
+# Documents / archives
+README.md
+UPLOAD_GUIDE.txt
+*.zip
+
+# OS / editor files
+.DS_Store
