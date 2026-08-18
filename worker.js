@@ -8,10 +8,13 @@ const MAX_TEXT = 20000;
 function defaultPayload() {
   return {
     memo: "",
+    phrases: [],
+    history: [],
     fields: Array.from({ length: DEFAULT_FIELDS }, (_, i) => ({
       id: crypto.randomUUID(),
       name: `フィールド${i + 1}`,
-      text: ""
+      text: "",
+      color: ""
     })),
     updatedAt: ""
   };
@@ -40,12 +43,19 @@ function validatePayload(input) {
   const fields = input.fields.map((f, i) => {
     const name = String(f?.name ?? `フィールド${i + 1}`).slice(0, MAX_NAME);
     const text = String(f?.text ?? "").slice(0, MAX_TEXT);
+    const color = String(f?.color ?? "").slice(0, 20);
     const id = String(f?.id ?? crypto.randomUUID()).slice(0, 100);
-    return { id, name, text };
+    return { id, name, text, color };
   });
 
   const memo = String(input?.memo ?? "").slice(0, 5000);
-  return { memo, fields, updatedAt: new Date().toISOString() };
+  const phrases = Array.isArray(input?.phrases) ? input.phrases.slice(0,100).map((p,i)=>({
+    id:String(p?.id ?? crypto.randomUUID()).slice(0,100),
+    name:String(p?.name ?? `定型文${i+1}`).slice(0,50),
+    text:String(p?.text ?? "").slice(0,5000)
+  })) : [];
+  const history = Array.isArray(input?.history) ? input.history.slice(0,20) : [];
+  return { memo, phrases, history, fields, updatedAt: new Date().toISOString() };
 }
 
 export class ClipboardRoom extends DurableObject {

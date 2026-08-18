@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.7: 共有クリップボード / 端末モード ===== */
+/* ===== 個人版 v3.0: 共有クリップボード / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.7: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v3.0: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.7: 共有メモ ===== */
+/* ===== 個人版 v3.0: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.7: 手動サーバー転送 ===== */
+/* ===== 個人版 v3.0: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.7: タイトル欄を非input化 ===== */
+/* ===== 個人版 v3.0: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -699,6 +699,35 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   pointer-events:none;
 }
 
+
+/* ===== 個人版 v3.0 ===== */
+.clip-field{position:relative}
+.clip-field.dragging{opacity:.55;transform:scale(.98)}
+.clip-drag-handle,.clip-color-btn{
+  flex:none;width:30px;height:30px;border:2px solid var(--line);
+  border-radius:9px;background:#fff;font-weight:1000;padding:0
+}
+.clip-drag-handle{cursor:grab;touch-action:none;background:#f4f4f4}
+.clipboard-extra-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
+.clipboard-extra-tools .action{padding:8px 6px;font-size:13px}
+.history-panel,.phrase-panel{
+  background:var(--panel);border:3px solid var(--line);border-radius:16px;
+  padding:10px;margin-top:10px;box-shadow:0 3px 0 rgba(0,0,0,.12)
+}
+.history-list,.phrase-list{display:grid;gap:7px;margin-top:7px}
+.history-item,.phrase-item{border:2px solid var(--line);border-radius:11px;padding:8px;background:#fff}
+.history-head,.phrase-head{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.history-meta{font-size:12px;color:var(--muted);font-weight:800}
+.history-actions,.phrase-actions{display:flex;gap:5px;margin-top:6px}
+.history-actions button,.phrase-actions button{
+  flex:1;border:2px solid var(--line);border-radius:9px;padding:6px 4px;font-weight:900;background:#fff
+}
+.template-form{display:grid;gap:6px;margin-top:7px}
+.template-form input,.template-form textarea{
+  width:100%;border:2px solid var(--line);border-radius:10px;padding:7px;background:#fff
+}
+.template-form textarea{min-height:72px}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -707,7 +736,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.7</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.0</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -809,12 +838,38 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
         <button class="action" id="clipAddBtn">＋ フィールド追加</button>
         <button class="action server-send-btn" id="clipSendBtn">サーバーに転送</button>
       </div>
+      <div class="clipboard-extra-tools">
+        <button class="action" id="clipHistoryBtn">履歴</button>
+        <button class="action" id="phraseTabBtn">定型文</button>
+      </div>
       <div class="clip-status" id="clipStatus">端末内に保存済み・サーバー未転送</div>
       <div class="shared-memo-wrap">
         <div class="shared-memo-title">メモ</div>
         <textarea id="sharedMemo" class="shared-memo" maxlength="5000" placeholder="ここにメモを入力" autocomplete="new-password" autocapitalize="off" spellcheck="false" inputmode="text"></textarea>
       </div>
     </div>
+
+    <div id="historyPanel" class="history-panel hidden">
+      <div class="history-head">
+        <strong>転送履歴</strong>
+        <button class="action" id="closeHistoryBtn">閉じる</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+
+    <div id="phrasePanel" class="phrase-panel hidden">
+      <div class="phrase-head">
+        <strong>定型文</strong>
+        <button class="action" id="closePhraseBtn">閉じる</button>
+      </div>
+      <div class="template-form">
+        <input id="phraseNameInput" maxlength="50" placeholder="定型文名" autocomplete="off">
+        <textarea id="phraseTextInput" maxlength="5000" placeholder="定型文の内容" autocomplete="off"></textarea>
+        <button class="action" id="addPhraseBtn">＋ 定型文追加</button>
+      </div>
+      <div class="phrase-list" id="phraseList"></div>
+    </div>
+
     <div id="clipboardFields"></div>
   </section>
 
@@ -1456,21 +1511,24 @@ function toggleExtraTabs(){
   }
 }
 
-// ===== 個人版 v2.7: 端末モード + 共有クリップボード =====
+// ===== 個人版 v3.0: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
 const CLIP_DRAFT_PREFIX='the_fool_head_clip_draft_v24_';
-let clipState={fields:[],memo:'',updatedAt:''};
+let clipState={fields:[],memo:'',phrases:[],history:[],updatedAt:''};
 let clipDirty=false;
 
 function makeDefaultClipState(){
   return {
     memo:'',
+    phrases:[],
+    history:[],
     fields:Array.from({length:DEFAULT_CLIP_FIELDS},(_,i)=>({
       id:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${i}-${Math.random()}`),
       name:`フィールド${i+1}`,
-      text:''
+      text:'',
+      color:''
     })),
     updatedAt:''
   };
@@ -1486,10 +1544,14 @@ function saveClipDraft(){
   try{
     localStorage.setItem(clipDraftKey(),JSON.stringify({
       memo:String(clipState.memo||'').slice(0,5000),
+      phrases:Array.isArray(clipState.phrases)?clipState.phrases:[],
+      history:Array.isArray(clipState.history)?clipState.history:[],
       fields:clipState.fields.map(f=>({
         id:String(f.id||''),
         name:String(f.name||'').slice(0,50),
-        text:String(f.text||'').slice(0,20000)
+        text:String(f.text||'').slice(0,20000),
+        color:String(f.color||'').slice(0,20),
+        color:String(f.color||'').slice(0,20)
       })),
       updatedAt:clipState.updatedAt||''
     }));
@@ -1499,7 +1561,13 @@ function loadClipDraft(){
   try{
     const d=JSON.parse(localStorage.getItem(clipDraftKey())||'null');
     if(d && Array.isArray(d.fields)){
-      clipState={memo:String(d.memo||''),fields:d.fields,updatedAt:d.updatedAt||''};
+      clipState={
+        memo:String(d.memo||''),
+        phrases:Array.isArray(d.phrases)?d.phrases:[],
+        history:Array.isArray(d.history)?d.history:[],
+        fields:d.fields.map(f=>({...f,color:String(f.color||'')})),
+        updatedAt:d.updatedAt||''
+      };
       return true;
     }
   }catch(e){}
@@ -1601,9 +1669,13 @@ function renderClipboardFields(){
   clipState.fields.forEach((field,index)=>{
     const card=document.createElement('div');
     card.className='clip-field';
+    if(field.color)card.style.background=field.color;
+    card.draggable=true;
     card.innerHTML=`
       <div class="clip-field-head">
+        <button class="clip-drag-handle" type="button" title="並び替え">≡</button>
         <div class="clip-field-name" contenteditable="true" role="textbox" aria-label="フィールド名" spellcheck="false" data-placeholder="フィールド名">${esc(field.name||`フィールド${index+1}`)}</div>
+        <button class="clip-color-btn" type="button" title="色分け">●</button>
         <button class="clip-field-delete" type="button" title="フィールド削除">×</button>
       </div>
       <textarea class="clip-text" maxlength="20000" placeholder="URL・文字列を貼り付け" autocomplete="new-password" autocapitalize="off" spellcheck="false" inputmode="text" name="clip-body-${index}"></textarea>
@@ -1665,11 +1737,135 @@ function renderClipboardFields(){
         markClipDirtyAndSave();
       }
     };
+
+    card.addEventListener('dragstart',e=>{
+      card.classList.add('dragging');
+      e.dataTransfer.setData('text/plain',String(index));
+    });
+    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+    card.addEventListener('dragover',e=>e.preventDefault());
+    card.addEventListener('drop',e=>{
+      e.preventDefault();
+      const from=Number(e.dataTransfer.getData('text/plain'));
+      const to=index;
+      if(Number.isInteger(from)&&from!==to){
+        const [moved]=clipState.fields.splice(from,1);
+        clipState.fields.splice(to,0,moved);
+        renderClipboardFields();
+        markClipDirtyAndSave();
+      }
+    });
+    card.querySelector('.clip-color-btn').onclick=()=>{
+      const colors=['','#fff7cc','#dff4ff','#e7f8ea','#ffe3e3','#eee5ff'];
+      const current=field.color||'';
+      field.color=colors[(colors.indexOf(current)+1)%colors.length];
+      card.style.background=field.color||'';
+      markClipDirtyAndSave();
+    };
+
     wrap.appendChild(card);
   });
   syncSharedMemoUI();
   hardenClipboardAutofill();
 }
+
+function renderPhrases(){
+  const wrap=document.getElementById('phraseList');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  (clipState.phrases||[]).forEach((p,index)=>{
+    const item=document.createElement('div');
+    item.className='phrase-item';
+    item.innerHTML=`
+      <div class="phrase-head"><strong>${esc(p.name||`定型文${index+1}`)}</strong></div>
+      <div style="font-size:12px;white-space:pre-wrap;margin-top:5px">${esc(p.text||'')}</div>
+      <div class="phrase-actions">
+        <button type="button" class="phrase-copy">コピー</button>
+        <button type="button" class="phrase-delete">削除</button>
+      </div>`;
+    item.querySelector('.phrase-copy').onclick=async()=>{
+      try{
+        await navigator.clipboard.writeText(p.text||'');
+        setClipStatus(`「${p.name||'定型文'}」をコピーしました`,'ok');
+      }catch(e){}
+    };
+    item.querySelector('.phrase-delete').onclick=()=>{
+      if(confirm('この定型文を削除しますか？')){
+        clipState.phrases.splice(index,1);
+        renderPhrases();
+        markClipDirtyAndSave();
+      }
+    };
+    wrap.appendChild(item);
+  });
+}
+function addPhrase(){
+  const name=document.getElementById('phraseNameInput').value.trim();
+  const text=document.getElementById('phraseTextInput').value;
+  if(!name && !text)return;
+  clipState.phrases=Array.isArray(clipState.phrases)?clipState.phrases:[];
+  clipState.phrases.push({
+    id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,
+    name:name||`定型文${clipState.phrases.length+1}`,
+    text:text.slice(0,5000)
+  });
+  document.getElementById('phraseNameInput').value='';
+  document.getElementById('phraseTextInput').value='';
+  renderPhrases();
+  markClipDirtyAndSave();
+}
+function snapshotForHistory(){
+  return {
+    id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,
+    at:new Date().toISOString(),
+    memo:String(clipState.memo||''),
+    phrases:JSON.parse(JSON.stringify(clipState.phrases||[])),
+    fields:JSON.parse(JSON.stringify(clipState.fields||[]))
+  };
+}
+function renderHistory(){
+  const wrap=document.getElementById('historyList');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  const history=Array.isArray(clipState.history)?clipState.history:[];
+  if(!history.length){
+    wrap.innerHTML='<div class="history-item">履歴はまだありません</div>';
+    return;
+  }
+  history.forEach((h,index)=>{
+    const item=document.createElement('div');
+    item.className='history-item';
+    const at=h.at?new Date(h.at).toLocaleString('ja-JP'):'';
+    item.innerHTML=`
+      <div><strong>履歴 ${history.length-index}</strong></div>
+      <div class="history-meta">${esc(at)}</div>
+      <div class="history-actions">
+        <button type="button" class="history-restore">復元</button>
+        <button type="button" class="history-delete">削除</button>
+      </div>`;
+    item.querySelector('.history-restore').onclick=()=>{
+      if(confirm('この履歴の状態へ復元しますか？')){
+        clipState.memo=String(h.memo||'');
+        clipState.phrases=JSON.parse(JSON.stringify(h.phrases||[]));
+        clipState.fields=JSON.parse(JSON.stringify(h.fields||[]));
+        saveClipDraft();
+        renderClipboardFields();
+        renderPhrases();
+        syncSharedMemoUI();
+        setClipStatus('履歴から復元しました・サーバー未転送');
+      }
+    };
+    item.querySelector('.history-delete').onclick=()=>{
+      if(confirm('この履歴を削除しますか？')){
+        clipState.history.splice(index,1);
+        renderHistory();
+        saveClipDraft();
+      }
+    };
+    wrap.appendChild(item);
+  });
+}
+
 function markClipDirtyAndSave(){
   clipDirty=true;
   saveClipDraft();
@@ -1699,7 +1895,13 @@ async function loadSharedClipboard(silent=false){
   try{
     if(!silent)setClipStatus('最新データを取得中…');
     const remote=await clipApi('GET');
-    clipState=remote && Array.isArray(remote.fields)?remote:makeDefaultClipState();
+    clipState=remote && Array.isArray(remote.fields)?{
+      memo:String(remote.memo||''),
+      phrases:Array.isArray(remote.phrases)?remote.phrases:[],
+      history:Array.isArray(remote.history)?remote.history:[],
+      fields:remote.fields.map(f=>({...f,color:String(f.color||'')})),
+      updatedAt:remote.updatedAt||''
+    }:makeDefaultClipState();
     clipDirty=false;
     saveClipDraft();
     renderClipboardFields();
@@ -1715,8 +1917,14 @@ async function loadSharedClipboard(silent=false){
 async function sendSharedClipboard(){
   if(!getShareKey())return;
   try{
+    clipState.history=Array.isArray(clipState.history)?clipState.history:[];
+    clipState.history.unshift(snapshotForHistory());
+    clipState.history=clipState.history.slice(0,20);
+    saveClipDraft();
     const payload={
       memo:String(clipState.memo||'').slice(0,5000),
+      phrases:Array.isArray(clipState.phrases)?clipState.phrases:[],
+      history:Array.isArray(clipState.history)?clipState.history:[],
       fields:clipState.fields.map(f=>({
         id:String(f.id||''),
         name:String(f.name||'').slice(0,50),
@@ -1753,6 +1961,19 @@ document.getElementById('showMoreTabsBtn').onclick=toggleExtraTabs;
 document.getElementById('clipRefreshBtn').onclick=()=>loadSharedClipboard();
 document.getElementById('clipAddBtn').onclick=addClipboardField;
 document.getElementById('clipSendBtn').onclick=()=>sendSharedClipboard();
+document.getElementById('clipHistoryBtn').onclick=()=>{
+  document.getElementById('historyPanel').classList.remove('hidden');
+  document.getElementById('phrasePanel').classList.add('hidden');
+  renderHistory();
+};
+document.getElementById('closeHistoryBtn').onclick=()=>document.getElementById('historyPanel').classList.add('hidden');
+document.getElementById('phraseTabBtn').onclick=()=>{
+  document.getElementById('phrasePanel').classList.remove('hidden');
+  document.getElementById('historyPanel').classList.add('hidden');
+  renderPhrases();
+};
+document.getElementById('closePhraseBtn').onclick=()=>document.getElementById('phrasePanel').classList.add('hidden');
+document.getElementById('addPhraseBtn').onclick=addPhrase;
 document.getElementById('sharedMemo')?.addEventListener('input',e=>{
   clipState.memo=e.target.value;
   markClipDirtyAndSave();
@@ -1795,7 +2016,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v2.7: クエスト宝箱アイコン */
+/* THE fool head 個人版 v3.0: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
