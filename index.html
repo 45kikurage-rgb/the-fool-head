@@ -108,7 +108,7 @@ th,td{padding:8px;border-bottom:1px solid #d8e0e5;text-align:right;white-space:n
 th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-child{text-align:left}
 .pos{color:#08782a;font-weight:900}.neg{color:#c62828;font-weight:900}
 .bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,100%);
- display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:rgba(255,255,255,.96);padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+ display:grid;grid-template-columns:repeat(4,1fr);gap:5px;background:rgba(255,255,255,.96);padding:8px 10px calc(8px + env(safe-area-inset-bottom));
  border-top:3px solid var(--line);z-index:12}
 .navbtn{border:3px solid var(--line);border-radius:14px;background:white;padding:9px 3px;font-weight:1000}
 .navbtn.active{background:#111;color:#fff;border-color:#111}
@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0: 共有クリップボード / 端末モード ===== */
+/* ===== 個人版 v3.1: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v3.1: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0: 共有メモ ===== */
+/* ===== 個人版 v3.1: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0: 手動サーバー転送 ===== */
+/* ===== 個人版 v3.1: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0: タイトル欄を非input化 ===== */
+/* ===== 個人版 v3.1: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -700,7 +700,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.0 ===== */
+/* ===== 個人版 v3.1 ===== */
 .clip-field{position:relative}
 .clip-field.dragging{opacity:.55;transform:scale(.98)}
 .clip-drag-handle,.clip-color-btn{
@@ -728,6 +728,93 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 .template-form textarea{min-height:72px}
 
+
+/* ===== 個人版 v3.1: 動作記録 / 定型文 タブ分離 ===== */
+.clipboard-extra-tools.single-tool{
+  grid-template-columns:1fr !important;
+}
+#phraseFields{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  align-items:start;
+}
+.phrase-card{
+  min-width:0;
+  background:#fff;
+  border:3px solid var(--line);
+  border-radius:14px;
+  padding:7px;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.phrase-card-head{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-bottom:5px;
+}
+.phrase-card-name{
+  flex:1;
+  min-width:0;
+  border:2px solid var(--line);
+  border-radius:9px;
+  padding:6px 7px;
+  background:#fffdf2;
+  font-size:13px;
+  font-weight:1000;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  outline:none;
+}
+.phrase-card-delete{
+  flex:none;
+  width:30px;
+  height:30px;
+  border:2px solid var(--line);
+  border-radius:9px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-weight:1000;
+}
+.phrase-card-text{
+  width:100%;
+  min-height:66px;
+  height:66px;
+  max-height:120px;
+  border:2px solid var(--line);
+  border-radius:9px;
+  padding:7px;
+  background:#fff;
+  font-size:12px;
+  line-height:1.35;
+  resize:vertical;
+}
+.phrase-card-actions{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:4px;
+  margin-top:5px;
+}
+.phrase-card-actions button{
+  min-width:0;
+  padding:6px 2px;
+  border:2px solid var(--line);
+  border-radius:8px;
+  font-size:11px;
+  font-weight:1000;
+  background:var(--panel);
+  white-space:nowrap;
+}
+.phrase-card-actions .phrase-copy{background:#e5f1ff}
+.phrase-card-actions .phrase-clear{background:#fee2e2}
+@media(max-width:430px){
+  #phraseFields{gap:6px}
+  .phrase-card{padding:6px}
+  .phrase-card-name{font-size:12px}
+  .phrase-card-text{font-size:11px}
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -736,7 +823,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.0</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -838,9 +925,8 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
         <button class="action" id="clipAddBtn">＋ フィールド追加</button>
         <button class="action server-send-btn" id="clipSendBtn">サーバーに転送</button>
       </div>
-      <div class="clipboard-extra-tools">
+      <div class="clipboard-extra-tools single-tool">
         <button class="action" id="clipHistoryBtn">履歴</button>
-        <button class="action" id="phraseTabBtn">定型文</button>
       </div>
       <div class="clip-status" id="clipStatus">端末内に保存済み・サーバー未転送</div>
       <div class="shared-memo-wrap">
@@ -856,21 +942,24 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
       </div>
       <div class="history-list" id="historyList"></div>
     </div>
+<div id="clipboardFields"></div>
+  </section>
 
-    <div id="phrasePanel" class="phrase-panel hidden">
-      <div class="phrase-head">
-        <strong>定型文</strong>
-        <button class="action" id="closePhraseBtn">閉じる</button>
+
+  <section id="phraseView" class="view">
+    <div class="card">
+      <div class="clipboard-title-row">
+        <h2>定型文</h2>
       </div>
-      <div class="template-form">
-        <input id="phraseNameInput" maxlength="50" placeholder="定型文名" autocomplete="off">
-        <textarea id="phraseTextInput" maxlength="5000" placeholder="定型文の内容" autocomplete="off"></textarea>
-        <button class="action" id="addPhraseBtn">＋ 定型文追加</button>
+      <div class="clipboard-toolbar phrase-toolbar">
+        <button class="action" id="phraseRefreshBtn">最新データ取得</button>
+        <button class="action" id="phraseAddFieldBtn">＋ 定型文追加</button>
+        <button class="action server-send-btn" id="phraseSendBtn">サーバーに転送</button>
       </div>
-      <div class="phrase-list" id="phraseList"></div>
+      <div class="clip-status" id="phraseStatus">端末内に保存済み・サーバー未転送</div>
     </div>
 
-    <div id="clipboardFields"></div>
+    <div id="phraseFields"></div>
   </section>
 
 </div>
@@ -878,7 +967,8 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <nav class="bottomnav">
  <button class="navbtn" data-view="clearView">✓ クエスト管理</button>
  <button class="navbtn" data-view="financeView">￥ 収支</button>
- <button class="navbtn active" data-view="clipboardView">▣ 共有</button>
+ <button class="navbtn active" data-view="clipboardView">▣ 動作記録</button>
+ <button class="navbtn" data-view="phraseView">▤ 定型文</button>
  
 </nav>
 
@@ -1444,7 +1534,8 @@ function restoreLastUIState(){
 
   const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
-  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1453,36 +1544,40 @@ function restoreLastUIState(){
   if(savedExtra){
     questBtn?.classList.remove('hidden');
     financeBtn?.classList.remove('hidden');
-    shareBtn?.classList.remove('hidden');
-    if(nav)nav.style.gridTemplateColumns='repeat(3,1fr)';
-    if(toggle)toggle.textContent='共有だけ表示';
+    logBtn?.classList.remove('hidden');
+    phraseBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(4,1fr)';
+    if(toggle)toggle.textContent='共有タブだけを表示する';
 
-    const allowed=['clearView','financeView','clipboardView'];
+    const allowed=['clearView','financeView','clipboardView','phraseView'];
     activateView(allowed.includes(savedView)?savedView:'clipboardView');
   }else{
     questBtn?.classList.add('hidden');
     financeBtn?.classList.add('hidden');
-    shareBtn?.classList.remove('hidden');
-    if(nav)nav.style.gridTemplateColumns='1fr';
+    logBtn?.classList.remove('hidden');
+    phraseBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(2,1fr)';
     if(toggle)toggle.textContent='表示を増やす';
-    activateView('clipboardView');
+
+    const sharedAllowed=['clipboardView','phraseView'];
+    activateView(sharedAllowed.includes(savedView)?savedView:'clipboardView');
   }
-  const activeView=document.querySelector('.view.active')?.id || 'clipboardView';
-  saveUIState(activeView);
 }
 
 function setSharedOnlyStartup(){
   extraTabsVisible=false;
   const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
-  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
   questBtn?.classList.add('hidden');
   financeBtn?.classList.add('hidden');
-  shareBtn?.classList.remove('hidden');
-  if(nav)nav.style.gridTemplateColumns='1fr';
+  logBtn?.classList.remove('hidden');
+  phraseBtn?.classList.remove('hidden');
+  if(nav)nav.style.gridTemplateColumns='repeat(2,1fr)';
   if(toggle)toggle.textContent='表示を増やす';
   activateView('clipboardView');
   saveUIState('clipboardView');
@@ -1492,26 +1587,33 @@ function toggleExtraTabs(){
   extraTabsVisible=!extraTabsVisible;
   const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
-  const shareBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
+  const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
   if(extraTabsVisible){
     questBtn?.classList.remove('hidden');
     financeBtn?.classList.remove('hidden');
-    shareBtn?.classList.remove('hidden');
-    if(nav)nav.style.gridTemplateColumns='repeat(3,1fr)';
-    if(toggle)toggle.textContent='共有だけ表示';
+    logBtn?.classList.remove('hidden');
+    phraseBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(4,1fr)';
+    if(toggle)toggle.textContent='共有タブだけを表示する';
   }else{
     questBtn?.classList.add('hidden');
     financeBtn?.classList.add('hidden');
-    if(nav)nav.style.gridTemplateColumns='1fr';
+    logBtn?.classList.remove('hidden');
+    phraseBtn?.classList.remove('hidden');
+    if(nav)nav.style.gridTemplateColumns='repeat(2,1fr)';
     if(toggle)toggle.textContent='表示を増やす';
-    activateView('clipboardView');
+    const current=document.querySelector('.view.active')?.id;
+    if(!['clipboardView','phraseView'].includes(current))activateView('clipboardView');
   }
+  const activeView=document.querySelector('.view.active')?.id || 'clipboardView';
+  saveUIState(activeView);
 }
 
-// ===== 個人版 v3.0: 端末モード + 共有クリップボード =====
+// ===== 個人版 v3.1: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -1607,6 +1709,12 @@ function activateView(viewId){
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
   document.querySelector(`.navbtn[data-view="${viewId}"]`)?.classList.add('active');
   if(viewId==='financeView')renderFinance();
+  if(viewId==='phraseView'){
+    if(!clipState.fields.length){
+      if(!loadClipDraft())clipState=makeDefaultClipState();
+    }
+    renderPhrases();
+  }
   if(viewId==='clipboardView'){
     if(!clipState.fields.length){
       if(!loadClipDraft())clipState=makeDefaultClipState();
@@ -1769,51 +1877,106 @@ function renderClipboardFields(){
   hardenClipboardAutofill();
 }
 
+
+function setPhraseStatus(text,type=''){
+  const el=document.getElementById('phraseStatus');
+  if(!el)return;
+  el.textContent=text;
+  el.className='clip-status'+(type?` ${type}`:'');
+}
+
 function renderPhrases(){
-  const wrap=document.getElementById('phraseList');
+  const wrap=document.getElementById('phraseFields');
   if(!wrap)return;
   wrap.innerHTML='';
-  (clipState.phrases||[]).forEach((p,index)=>{
-    const item=document.createElement('div');
-    item.className='phrase-item';
-    item.innerHTML=`
-      <div class="phrase-head"><strong>${esc(p.name||`定型文${index+1}`)}</strong></div>
-      <div style="font-size:12px;white-space:pre-wrap;margin-top:5px">${esc(p.text||'')}</div>
-      <div class="phrase-actions">
-        <button type="button" class="phrase-copy">コピー</button>
-        <button type="button" class="phrase-delete">削除</button>
+  clipState.phrases=Array.isArray(clipState.phrases)?clipState.phrases:[];
+  clipState.phrases.forEach((p,index)=>{
+    const card=document.createElement('div');
+    card.className='phrase-card';
+    card.innerHTML=`
+      <div class="phrase-card-head">
+        <div class="phrase-card-name" contenteditable="true" role="textbox" spellcheck="false" data-placeholder="定型文名">${esc(p.name||`定型文${index+1}`)}</div>
+        <button class="phrase-card-delete" type="button">×</button>
+      </div>
+      <textarea class="phrase-card-text" maxlength="5000" placeholder="定型文の内容" autocomplete="new-password" spellcheck="false" inputmode="text"></textarea>
+      <div class="phrase-card-actions">
+        <button type="button" class="phrase-paste">貼付</button>
+        <button type="button" class="phrase-copy">複写</button>
+        <button type="button" class="phrase-clear">削除</button>
       </div>`;
-    item.querySelector('.phrase-copy').onclick=async()=>{
+    const name=card.querySelector('.phrase-card-name');
+    const text=card.querySelector('.phrase-card-text');
+    text.value=p.text||'';
+
+    name.addEventListener('input',()=>{
+      p.name=(name.textContent||'').replace(/
+/g,' ').slice(0,50);
+      markClipDirtyAndSave();
+      setPhraseStatus('端末内に保存済み・サーバー未転送');
+    });
+    name.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();name.blur();}
+    });
+    text.addEventListener('input',()=>{
+      p.text=text.value.slice(0,5000);
+      markClipDirtyAndSave();
+      setPhraseStatus('端末内に保存済み・サーバー未転送');
+    });
+
+    card.querySelector('.phrase-paste').onclick=async()=>{
+      try{
+        const t=await navigator.clipboard.readText();
+        text.value=t;
+        p.text=t.slice(0,5000);
+        markClipDirtyAndSave();
+        setPhraseStatus('端末内に保存済み・サーバー未転送');
+      }catch(e){
+        text.focus();
+        alert('自動貼り付けが許可されていません。入力欄を長押しして貼り付けてください。');
+      }
+    };
+    card.querySelector('.phrase-copy').onclick=async()=>{
       try{
         await navigator.clipboard.writeText(p.text||'');
-        setClipStatus(`「${p.name||'定型文'}」をコピーしました`,'ok');
+        setPhraseStatus(`「${p.name||`定型文${index+1}`}」を複写しました`,'ok');
       }catch(e){}
     };
-    item.querySelector('.phrase-delete').onclick=()=>{
-      if(confirm('この定型文を削除しますか？')){
+    card.querySelector('.phrase-clear').onclick=()=>{
+      if(!p.text || confirm('この定型文の内容を削除しますか？')){
+        p.text='';
+        text.value='';
+        markClipDirtyAndSave();
+        setPhraseStatus('端末内に保存済み・サーバー未転送');
+      }
+    };
+    card.querySelector('.phrase-card-delete').onclick=()=>{
+      if(confirm(`「${p.name||`定型文${index+1}`}」を削除しますか？`)){
         clipState.phrases.splice(index,1);
         renderPhrases();
         markClipDirtyAndSave();
+        setPhraseStatus('端末内に保存済み・サーバー未転送');
       }
     };
-    wrap.appendChild(item);
+    wrap.appendChild(card);
   });
 }
+
 function addPhrase(){
-  const name=document.getElementById('phraseNameInput').value.trim();
-  const text=document.getElementById('phraseTextInput').value;
-  if(!name && !text)return;
   clipState.phrases=Array.isArray(clipState.phrases)?clipState.phrases:[];
+  if(clipState.phrases.length>=100){
+    alert('定型文は最大100件です。');
+    return;
+  }
   clipState.phrases.push({
     id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,
-    name:name||`定型文${clipState.phrases.length+1}`,
-    text:text.slice(0,5000)
+    name:`定型文${clipState.phrases.length+1}`,
+    text:''
   });
-  document.getElementById('phraseNameInput').value='';
-  document.getElementById('phraseTextInput').value='';
   renderPhrases();
   markClipDirtyAndSave();
+  setPhraseStatus('端末内に保存済み・サーバー未転送');
 }
+
 function snapshotForHistory(){
   return {
     id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,
@@ -1961,19 +2124,24 @@ document.getElementById('showMoreTabsBtn').onclick=toggleExtraTabs;
 document.getElementById('clipRefreshBtn').onclick=()=>loadSharedClipboard();
 document.getElementById('clipAddBtn').onclick=addClipboardField;
 document.getElementById('clipSendBtn').onclick=()=>sendSharedClipboard();
+document.getElementById('phraseRefreshBtn').onclick=async()=>{
+  await loadSharedClipboard();
+  renderPhrases();
+  setPhraseStatus('サーバーから取得済み','ok');
+};
+document.getElementById('phraseAddFieldBtn').onclick=addPhrase;
+document.getElementById('phraseSendBtn').onclick=async()=>{
+  await sendSharedClipboard();
+  renderPhrases();
+  setPhraseStatus('サーバー転送済み','ok');
+};
 document.getElementById('clipHistoryBtn').onclick=()=>{
   document.getElementById('historyPanel').classList.remove('hidden');
   document.getElementById('phrasePanel').classList.add('hidden');
   renderHistory();
 };
 document.getElementById('closeHistoryBtn').onclick=()=>document.getElementById('historyPanel').classList.add('hidden');
-document.getElementById('phraseTabBtn').onclick=()=>{
-  document.getElementById('phrasePanel').classList.remove('hidden');
-  document.getElementById('historyPanel').classList.add('hidden');
-  renderPhrases();
-};
-document.getElementById('closePhraseBtn').onclick=()=>document.getElementById('phrasePanel').classList.add('hidden');
-document.getElementById('addPhraseBtn').onclick=addPhrase;
+
 document.getElementById('sharedMemo')?.addEventListener('input',e=>{
   clipState.memo=e.target.value;
   markClipDirtyAndSave();
@@ -1989,6 +2157,12 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
      renderClipboardFields();
    }
  }
+ if(b.dataset.view==='phraseView'){
+   if(!clipState.fields.length){
+     if(!loadClipDraft())clipState=makeDefaultClipState();
+   }
+   renderPhrases();
+ }
  saveUIState(b.dataset.view);
 });
 document.getElementById('nameModal').onclick=e=>{if(e.target.id==='nameModal')e.currentTarget.classList.remove('show')};
@@ -1996,6 +2170,7 @@ document.getElementById('nameModal').onclick=e=>{if(e.target.id==='nameModal')e.
 renderClear();setPeriodMode('month');renderFinance();
 if(!loadClipDraft())clipState=makeDefaultClipState();
 renderClipboardFields();
+renderPhrases();
 restoreLastUIState();
 </script>
 
@@ -2016,7 +2191,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v3.0: クエスト宝箱アイコン */
+/* THE fool head 個人版 v3.1: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
