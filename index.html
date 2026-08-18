@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.5: 共有クリップボード / 端末モード ===== */
+/* ===== 個人版 v2.6: 共有クリップボード / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.5: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v2.6: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.5: 共有メモ ===== */
+/* ===== 個人版 v2.6: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v2.5: 手動サーバー転送 ===== */
+/* ===== 個人版 v2.6: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -683,6 +683,22 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   background:#e7f8ea !important;
 }
 
+
+/* ===== 個人版 v2.6: タイトル欄を非input化 ===== */
+.clip-field-name[contenteditable="true"]{
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  outline:none;
+  cursor:text;
+}
+.clip-field-name[contenteditable="true"]:empty::before{
+  content:attr(data-placeholder);
+  color:#888;
+  pointer-events:none;
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -691,7 +707,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.5</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v2.6</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -1398,7 +1414,7 @@ function toggleExtraTabs(){
   }
 }
 
-// ===== 個人版 v2.5: 端末モード + 共有クリップボード =====
+// ===== 個人版 v2.6: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -1513,7 +1529,7 @@ function applyDeviceMode(forceOpen=false){
 
 
 function hardenClipboardAutofill(){
-  document.querySelectorAll('.clip-field-name,.clip-text,#sharedMemo').forEach((el,i)=>{
+  document.querySelectorAll('.clip-text,#sharedMemo').forEach((el,i)=>{
     el.setAttribute('autocomplete','new-password');
     el.setAttribute('autocapitalize','off');
     el.setAttribute('spellcheck','false');
@@ -1521,6 +1537,12 @@ function hardenClipboardAutofill(){
     if(!el.getAttribute('name')){
       el.setAttribute('name',`clip-neutral-${i}`);
     }
+  });
+  document.querySelectorAll('.clip-field-name').forEach(el=>{
+    el.removeAttribute('autocomplete');
+    el.removeAttribute('name');
+    el.removeAttribute('inputmode');
+    el.setAttribute('spellcheck','false');
   });
 }
 
@@ -1539,7 +1561,7 @@ function renderClipboardFields(){
     card.className='clip-field';
     card.innerHTML=`
       <div class="clip-field-head">
-        <input class="clip-field-name" maxlength="50" value="${esc(field.name||`フィールド${index+1}`)}" aria-label="フィールド名" autocomplete="new-password" autocapitalize="off" spellcheck="false" inputmode="text" name="clip-title-${index}">
+        <div class="clip-field-name" contenteditable="true" role="textbox" aria-label="フィールド名" spellcheck="false" data-placeholder="フィールド名">${esc(field.name||`フィールド${index+1}`)}</div>
         <button class="clip-field-delete" type="button" title="フィールド削除">×</button>
       </div>
       <textarea class="clip-text" maxlength="20000" placeholder="URL・文字列を貼り付け" autocomplete="new-password" autocapitalize="off" spellcheck="false" inputmode="text" name="clip-body-${index}"></textarea>
@@ -1553,8 +1575,15 @@ function renderClipboardFields(){
     textarea.value=field.text||'';
 
     nameInput.addEventListener('input',()=>{
-      field.name=nameInput.value;
+      field.name=(nameInput.textContent||'').replace(/\n/g,' ').slice(0,50);
+      if(nameInput.textContent!==field.name)nameInput.textContent=field.name;
       markClipDirtyAndSave();
+    });
+    nameInput.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){
+        e.preventDefault();
+        nameInput.blur();
+      }
     });
     textarea.addEventListener('input',()=>{
       field.text=textarea.value;
@@ -1720,7 +1749,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v2.5: クエスト宝箱アイコン */
+/* THE fool head 個人版 v2.6: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
