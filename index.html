@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1: 動作記録 / 端末モード ===== */
+/* ===== 個人版 v3.1.1: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v3.1.1: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1: 共有メモ ===== */
+/* ===== 個人版 v3.1.1: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1: 手動サーバー転送 ===== */
+/* ===== 個人版 v3.1.1: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1: タイトル欄を非input化 ===== */
+/* ===== 個人版 v3.1.1: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -700,7 +700,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1 ===== */
+/* ===== 個人版 v3.1.1 ===== */
 .clip-field{position:relative}
 .clip-field.dragging{opacity:.55;transform:scale(.98)}
 .clip-drag-handle,.clip-color-btn{
@@ -729,7 +729,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 .template-form textarea{min-height:72px}
 
 
-/* ===== 個人版 v3.1: 動作記録 / 定型文 タブ分離 ===== */
+/* ===== 個人版 v3.1.1: 動作記録 / 定型文 タブ分離 ===== */
 .clipboard-extra-tools.single-tool{
   grid-template-columns:1fr !important;
 }
@@ -823,7 +823,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.1.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -1613,7 +1613,7 @@ function toggleExtraTabs(){
   saveUIState(activeView);
 }
 
-// ===== 個人版 v3.1: 端末モード + 共有クリップボード =====
+// ===== 個人版 v3.1.1: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -1909,8 +1909,7 @@ function renderPhrases(){
     text.value=p.text||'';
 
     name.addEventListener('input',()=>{
-      p.name=(name.textContent||'').replace(/
-/g,' ').slice(0,50);
+      p.name=(name.textContent||'').replace(/\n/g,' ').slice(0,50);
       markClipDirtyAndSave();
       setPhraseStatus('端末内に保存済み・サーバー未転送');
     });
@@ -2191,7 +2190,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v3.1: クエスト宝箱アイコン */
+/* THE fool head 個人版 v3.1.1: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
