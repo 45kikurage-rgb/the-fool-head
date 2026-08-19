@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1: 動作記録 / 端末モード ===== */
+/* ===== 個人版 v3.3: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v3.3: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1: 共有メモ ===== */
+/* ===== 個人版 v3.3: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1: 手動サーバー転送 ===== */
+/* ===== 個人版 v3.3: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1: タイトル欄を非input化 ===== */
+/* ===== 個人版 v3.3: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -700,7 +700,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.1.1 ===== */
+/* ===== 個人版 v3.3 ===== */
 .clip-field{position:relative}
 .clip-field.dragging{opacity:.55;transform:scale(.98)}
 .clip-drag-handle,.clip-color-btn{
@@ -729,7 +729,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 .template-form textarea{min-height:72px}
 
 
-/* ===== 個人版 v3.1.1: 動作記録 / 定型文 タブ分離 ===== */
+/* ===== 個人版 v3.3: 動作記録 / 定型文 タブ分離 ===== */
 .clipboard-extra-tools.single-tool{
   grid-template-columns:1fr !important;
 }
@@ -815,6 +815,34 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   .phrase-card-text{font-size:11px}
 }
 
+
+/* ===== 個人版 v3.3: クー活入力時の収支サマリー順序 ===== */
+.charge-only-kpi.has-kuu{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  justify-content:center !important;
+  gap:6px !important;
+}
+.charge-only-kpi.has-kuu > div:first-child{
+  order:2;
+  width:100%;
+  text-align:center;
+}
+.charge-only-kpi.has-kuu .kuu-extra.show{
+  display:contents !important;
+}
+.charge-only-kpi.has-kuu .kuu-extra-line{
+  width:100%;
+  justify-content:center !important;
+}
+.charge-only-kpi.has-kuu .kuu-extra-line:first-child{
+  order:3;
+}
+.charge-only-kpi.has-kuu .kuu-extra-line:last-child{
+  order:1;
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -823,7 +851,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.1.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.3</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -877,13 +905,17 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
      <div class="kpis summary-charge-only">
        <div class="kpi charge-only-kpi" id="chargeSummaryBox">
          <div>
-           <div class="label">チャージ合計</div>
+           <div class="label" id="chargeTotalLabel">チャージ合計</div>
            <div class="value" id="chargeTotal">0 pt</div>
          </div>
          <div class="kuu-extra" id="kuuExtra">
            <div class="kuu-extra-line">
              <span class="extra-label">クー活合計</span>
              <span class="extra-value" id="kuuTotal">0円</span>
+           </div>
+           <div class="kuu-extra-line">
+             <span class="extra-label">100円抜き</span>
+             <span class="extra-value" id="hundredYenCount">×0回</span>
            </div>
            <div class="kuu-extra-line">
              <span class="extra-label">当月合計</span>
@@ -1260,16 +1292,47 @@ function selectedMonthKey(){
  if(!y || !m)return '';
  return `${y}-${String(m).padStart(2,'0')}`;
 }
+function getHundredYenChargeCount(){
+ const period=document.getElementById('periodSel').value || 'month';
+ const y=+document.getElementById('yearSel').value;
+ const m=+document.getElementById('monthSel').value;
+ return data.finance.records.filter(r=>{
+   if(Number(r.amount)!==100)return false;
+   const d=parseDate(r.date);
+   if(!d)return false;
+   if(period==='all')return true;
+   if(period==='year')return d.getFullYear()===y;
+   return d.getFullYear()===y && (d.getMonth()+1)===m;
+ }).length;
+}
+
 function getKuuValue(){
+ const period=document.getElementById('periodSel').value || 'month';
+ const map=data.finance.kuukatsu || {};
+
+ if(period==='all'){
+   return Object.values(map).reduce((sum,v)=>sum+(Number(v)||0),0);
+ }
+
+ const y=+document.getElementById('yearSel').value;
+ if(!y)return 0;
+
+ if(period==='year'){
+   const prefix=`${y}-`;
+   return Object.entries(map)
+     .filter(([key])=>key.startsWith(prefix))
+     .reduce((sum,[,v])=>sum+(Number(v)||0),0);
+ }
+
  const key=selectedMonthKey();
  if(!key)return 0;
- return Number(data.finance.kuukatsu?.[key] || 0);
+ return Number(map[key] || 0);
 }
 function syncKuuInput(){
  const period=document.getElementById('periodSel').value || 'month';
  const card=document.getElementById('kuuCard');
  const input=document.getElementById('kuuInput');
- if(period==='year'){
+ if(period==='year' || period==='all'){
    card.style.display='none';
    return;
  }
@@ -1282,18 +1345,35 @@ function renderKuuSummary(charge){
  const period=document.getElementById('periodSel').value || 'month';
  const extra=document.getElementById('kuuExtra');
  const box=document.getElementById('chargeSummaryBox');
- if(period==='year' || period==='all'){
-   extra.classList.remove('show');
-   box.classList.remove('has-kuu');
-   return;
- }
  const kuu=getKuuValue();
+ const hundredCount=getHundredYenChargeCount();
+ const hundredEl=document.getElementById('hundredYenCount');
+ if(hundredEl)hundredEl.textContent=`×${hundredCount}回`;
+ const chargeLabel=document.getElementById('chargeTotalLabel');
+ const grandLabel=document.querySelector('#monthGrandTotal')?.previousElementSibling;
+
  if(kuu>0){
    document.getElementById('kuuTotal').textContent=`${fmt(kuu)}円`;
    document.getElementById('monthGrandTotal').textContent=`${fmt(charge+kuu)}円`;
+
+   if(grandLabel){
+     grandLabel.textContent=
+       period==='year' ? '当年合計' :
+       period==='all' ? '全期間合計' :
+       '当月合計';
+   }
+
+   if(chargeLabel)chargeLabel.textContent='チャージ額合計';
    extra.classList.add('show');
    box.classList.add('has-kuu');
  }else{
+   if(grandLabel){
+     grandLabel.textContent=
+       period==='year' ? '当年合計' :
+       period==='all' ? '全期間合計' :
+       '当月合計';
+   }
+   if(chargeLabel)chargeLabel.textContent='チャージ合計';
    extra.classList.remove('show');
    box.classList.remove('has-kuu');
  }
@@ -1613,7 +1693,7 @@ function toggleExtraTabs(){
   saveUIState(activeView);
 }
 
-// ===== 個人版 v3.1.1: 端末モード + 共有クリップボード =====
+// ===== 個人版 v3.3: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -2190,7 +2270,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v3.1.1: クエスト宝箱アイコン */
+/* THE fool head 個人版 v3.3: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
