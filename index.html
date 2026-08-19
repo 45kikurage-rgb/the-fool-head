@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.4.1: 動作記録 / 端末モード ===== */
+/* ===== 個人版 v3.5: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -949,6 +949,109 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   }
 }
 
+
+/* ===== 個人版 v3.5: 収支サマリー最終配置 ===== */
+#chargeSummaryBox{
+  padding:16px 14px !important;
+}
+.summary-card-v35{
+  width:100%;
+}
+.summary-top-v35{
+  position:relative;
+  min-height:104px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.grand-total-v35{
+  text-align:center;
+  width:100%;
+  padding:0 82px;
+}
+.grand-label-v35{
+  font-size:26px;
+  line-height:1.15;
+  font-weight:1000;
+  color:#26343a;
+}
+.grand-value-v35{
+  margin-top:5px;
+  font-size:34px;
+  line-height:1.05;
+  font-weight:1000;
+  color:#111;
+  white-space:nowrap;
+  letter-spacing:-0.8px;
+}
+.hundred-count-v35{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:76px;
+  text-align:right;
+  font-size:11px;
+  line-height:1.35;
+  font-weight:900;
+  color:#65737d;
+  white-space:nowrap;
+}
+.summary-divider-v35{
+  border-top:1px solid #aab4ba;
+  margin:4px 0 10px;
+}
+.summary-bottom-v35{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.summary-col-v35{
+  text-align:center;
+  padding:3px 8px;
+}
+.summary-col-v35 + .summary-col-v35{
+  border-left:1px solid #aab4ba;
+}
+.sub-label-v35{
+  font-size:17px;
+  line-height:1.2;
+  font-weight:1000;
+  color:#26343a;
+}
+.sub-value-v35{
+  margin-top:3px;
+  font-size:24px;
+  line-height:1.1;
+  font-weight:1000;
+  color:#111;
+  white-space:nowrap;
+}
+@media (max-width:430px){
+  .summary-top-v35{
+    min-height:100px;
+  }
+  .grand-total-v35{
+    padding:0 74px;
+  }
+  .grand-label-v35{
+    font-size:24px;
+  }
+  .grand-value-v35{
+    font-size:31px;
+    letter-spacing:-1px;
+  }
+  .hundred-count-v35{
+    width:68px;
+    font-size:10px;
+  }
+  .sub-label-v35{
+    font-size:16px;
+  }
+  .sub-value-v35{
+    font-size:22px;
+  }
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -1009,33 +1112,39 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
    <div class="card">
      <div class="kpis summary-charge-only">
-       <div class="kpi charge-only-kpi" id="chargeSummaryBox">
-          <div class="finance-summary-v34">
-            <div class="finance-summary-top">
-              <div class="finance-grand-center">
-                <div class="finance-grand-label" id="grandTotalLabel">当月合計</div>
-                <div class="finance-grand-value" id="monthGrandTotal">0円</div>
+       
+        <div class="card charge-only-kpi" id="chargeSummaryBox">
+          <div class="summary-card-v35">
+
+            <div class="summary-top-v35">
+              <div class="grand-total-v35">
+                <div class="grand-label-v35" id="grandTotalLabel">当月合計</div>
+                <div class="grand-value-v35" id="monthGrandTotal">0円</div>
               </div>
-              <div class="finance-hundred-right">
-                <div class="hundred-label">100円抜き</div>
-                <div class="hundred-value" id="hundredYenCount">×0回</div>
+
+              <div class="hundred-count-v35">
+                <div>100円抜き</div>
+                <div id="hundredYenCount">×0回</div>
               </div>
             </div>
 
-            <div class="finance-summary-divider"></div>
+            <div class="summary-divider-v35"></div>
 
-            <div class="finance-summary-bottom">
-              <div class="finance-summary-col">
-                <div class="finance-sub-label" id="chargeTotalLabel">チャージ額合計</div>
-                <div class="finance-sub-value" id="chargeTotal">0円</div>
+            <div class="summary-bottom-v35">
+              <div class="summary-col-v35">
+                <div class="sub-label-v35" id="chargeTotalLabel">チャージ額合計</div>
+                <div class="sub-value-v35" id="chargeTotal">0円</div>
               </div>
-              <div class="finance-summary-col">
-                <div class="finance-sub-label">クー活合計</div>
-                <div class="finance-sub-value" id="kuuTotal">0円</div>
+
+              <div class="summary-col-v35">
+                <div class="sub-label-v35">クー活合計</div>
+                <div class="sub-value-v35" id="kuuTotal">0円</div>
               </div>
             </div>
+
           </div>
-</div>
+        </div>
+
          </div>
          <div class="kuu-extra" id="kuuExtra">
            <div class="kuu-extra-line">
