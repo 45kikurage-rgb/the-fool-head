@@ -1067,6 +1067,28 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   }
 }
 
+
+/* ===== 個人版 v3.4.2: 収支カード間の異常な空白を除去 ===== */
+#financeView{
+  min-height:0 !important;
+  height:auto !important;
+}
+#financeView > .card{
+  position:relative !important;
+  top:auto !important;
+  bottom:auto !important;
+  margin-top:10px !important;
+  margin-bottom:0 !important;
+  transform:none !important;
+}
+#financeView > .card + .card{
+  margin-top:10px !important;
+}
+#chargeSummaryBox{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -1075,7 +1097,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.2</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -1127,53 +1149,35 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
    <div class="card">
      <div class="kpis summary-charge-only">
-       
-        <div class="card charge-only-kpi" id="chargeSummaryBox">
-          <div class="summary-card-v35">
+       <div class="card charge-only-kpi" id="chargeSummaryBox">
+         <div class="summary-card-v35">
 
-            <div class="summary-top-v35">
-              <div class="grand-total-v35">
-                <div class="grand-label-v35" id="grandTotalLabel">当月合計</div>
-                <div class="grand-value-v35" id="monthGrandTotal">0円</div>
-              </div>
+           <div class="summary-top-v35">
+             <div class="grand-total-v35">
+               <div class="grand-label-v35" id="grandTotalLabel">当月合計</div>
+               <div class="grand-value-v35" id="monthGrandTotal">0円</div>
+             </div>
 
-              <div class="hundred-count-v35">
-                <div>100円抜き</div>
-                <div id="hundredYenCount">×0回</div>
-              </div>
-            </div>
-
-            <div class="summary-divider-v35"></div>
-
-            <div class="summary-bottom-v35">
-              <div class="summary-col-v35">
-                <div class="sub-label-v35" id="chargeTotalLabel">チャージ額合計</div>
-                <div class="sub-value-v35" id="chargeTotal">0円</div>
-              </div>
-
-              <div class="summary-col-v35">
-                <div class="sub-label-v35">クー活合計</div>
-                <div class="sub-value-v35" id="kuuTotal">0円</div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-         </div>
-         <div class="kuu-extra" id="kuuExtra">
-           <div class="kuu-extra-line">
-             <span class="extra-label">クー活合計</span>
-             <span class="extra-value" id="kuuTotal">0円</span>
+             <div class="hundred-count-v35">
+               <div>100円抜き</div>
+               <div id="hundredYenCount">×0回</div>
+             </div>
            </div>
-           <div class="kuu-extra-line">
-             <span class="extra-label">100円抜き</span>
-             <span class="extra-value" id="hundredYenCount">×0回</span>
+
+           <div class="summary-divider-v35"></div>
+
+           <div class="summary-bottom-v35">
+             <div class="summary-col-v35">
+               <div class="sub-label-v35" id="chargeTotalLabel">チャージ額合計</div>
+               <div class="sub-value-v35" id="chargeTotal">0円</div>
+             </div>
+
+             <div class="summary-col-v35">
+               <div class="sub-label-v35">クー活合計</div>
+               <div class="sub-value-v35" id="kuuTotal">0円</div>
+             </div>
            </div>
-           <div class="kuu-extra-line">
-             <span class="extra-label">当月合計</span>
-             <span class="extra-value" id="monthGrandTotal">0円</span>
-           </div>
+
          </div>
        </div>
      </div>
