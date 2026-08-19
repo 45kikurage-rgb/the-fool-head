@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.5: 動作記録 / 端末モード ===== */
+/* ===== 個人版 v3.5.1: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -1049,6 +1049,21 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   }
   .sub-value-v35{
     font-size:22px;
+  }
+}
+
+
+/* ===== 個人版 v3.5.1: 当月合計エリアの上下余白を縮小 ===== */
+.summary-top-v35{
+  min-height:0 !important;
+  padding-top:6px !important;
+  padding-bottom:6px !important;
+}
+@media (max-width:430px){
+  .summary-top-v35{
+    min-height:0 !important;
+    padding-top:6px !important;
+    padding-bottom:6px !important;
   }
 }
 
