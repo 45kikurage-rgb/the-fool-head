@@ -424,7 +424,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: 動作記録 / 端末モード ===== */
+/* ===== 個人版 v3.4: 動作記録 / 端末モード ===== */
 .hidden{display:none !important}
 .clipboard-toolbar{
   display:grid;
@@ -563,7 +563,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: 共有クリップボード 2列コンパクト表示 ===== */
+/* ===== 個人版 v3.4: 共有クリップボード 2列コンパクト表示 ===== */
 #clipboardFields{
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
@@ -639,7 +639,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: 共有メモ ===== */
+/* ===== 個人版 v3.4: 共有メモ ===== */
 .shared-memo-wrap{margin-top:8px}
 .shared-memo-title{font-size:13px;font-weight:1000;margin:0 0 4px 3px}
 .shared-memo{
@@ -661,7 +661,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: 手動サーバー転送 ===== */
+/* ===== 個人版 v3.4: 手動サーバー転送 ===== */
 .clipboard-title-row{
   display:flex;
   align-items:center;
@@ -684,7 +684,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: タイトル欄を非input化 ===== */
+/* ===== 個人版 v3.4: タイトル欄を非input化 ===== */
 .clip-field-name[contenteditable="true"]{
   display:block;
   overflow:hidden;
@@ -700,7 +700,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1 ===== */
+/* ===== 個人版 v3.4 ===== */
 .clip-field{position:relative}
 .clip-field.dragging{opacity:.55;transform:scale(.98)}
 .clip-drag-handle,.clip-color-btn{
@@ -729,7 +729,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 .template-form textarea{min-height:72px}
 
 
-/* ===== 個人版 v3.3.1: 動作記録 / 定型文 タブ分離 ===== */
+/* ===== 個人版 v3.4: 動作記録 / 定型文 タブ分離 ===== */
 .clipboard-extra-tools.single-tool{
   grid-template-columns:1fr !important;
 }
@@ -816,7 +816,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.3.1: クー活入力時の収支サマリー順序 ===== */
+/* ===== 個人版 v3.4: クー活入力時の収支サマリー順序 ===== */
 .charge-only-kpi.has-kuu{
   display:flex !important;
   flex-direction:column !important;
@@ -843,6 +843,112 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   order:1;
 }
 
+
+/* ===== 個人版 v3.4: 収支サマリー再構成 ===== */
+#chargeSummaryBox{
+  padding:16px 14px !important;
+}
+.finance-summary-v34{
+  width:100%;
+}
+.finance-summary-top{
+  position:relative;
+  min-height:92px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.finance-grand-center{
+  text-align:center;
+  width:100%;
+  padding:0 108px;
+}
+.finance-grand-label{
+  font-size:26px;
+  line-height:1.15;
+  font-weight:1000;
+  color:#26343a;
+}
+.finance-grand-value{
+  margin-top:3px;
+  font-size:36px;
+  line-height:1.1;
+  font-weight:1000;
+  color:#111;
+}
+.finance-hundred-right{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:104px;
+  text-align:right;
+  font-weight:900;
+  color:#65737d;
+}
+.hundred-label,
+.hundred-value{
+  font-size:13px;
+  line-height:1.35;
+  white-space:nowrap;
+}
+.finance-summary-divider{
+  border-top:1px solid #aab4ba;
+  margin:5px 0 10px;
+}
+.finance-summary-bottom{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+}
+.finance-summary-col{
+  text-align:center;
+  padding:3px 8px;
+}
+.finance-summary-col + .finance-summary-col{
+  border-left:1px solid #aab4ba;
+}
+.finance-sub-label{
+  font-size:18px;
+  line-height:1.25;
+  font-weight:1000;
+  color:#26343a;
+}
+.finance-sub-value{
+  margin-top:3px;
+  font-size:25px;
+  line-height:1.15;
+  font-weight:1000;
+  color:#111;
+}
+@media (max-width:430px){
+  .finance-summary-top{
+    min-height:84px;
+  }
+  .finance-grand-center{
+    padding:0 92px;
+  }
+  .finance-grand-label{
+    font-size:24px;
+  }
+  .finance-grand-value{
+    font-size:34px;
+  }
+  .finance-hundred-right{
+    width:90px;
+  }
+  .hundred-label,
+  .hundred-value{
+    font-size:12px;
+  }
+  .finance-sub-label{
+    font-size:16px;
+  }
+  .finance-sub-value{
+    font-size:22px;
+  }
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -851,7 +957,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.3.1</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -904,9 +1010,32 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
    <div class="card">
      <div class="kpis summary-charge-only">
        <div class="kpi charge-only-kpi" id="chargeSummaryBox">
-         <div>
-           <div class="label" id="chargeTotalLabel">チャージ合計</div>
-           <div class="value" id="chargeTotal">0 pt</div>
+          <div class="finance-summary-v34">
+            <div class="finance-summary-top">
+              <div class="finance-grand-center">
+                <div class="finance-grand-label" id="grandTotalLabel">当月合計</div>
+                <div class="finance-grand-value" id="monthGrandTotal">0 pt</div>
+              </div>
+              <div class="finance-hundred-right">
+                <div class="hundred-label">100円抜き</div>
+                <div class="hundred-value" id="hundredYenCount">×0回</div>
+              </div>
+            </div>
+
+            <div class="finance-summary-divider"></div>
+
+            <div class="finance-summary-bottom">
+              <div class="finance-summary-col">
+                <div class="finance-sub-label" id="chargeTotalLabel">チャージ額合計</div>
+                <div class="finance-sub-value" id="chargeTotal">0 pt</div>
+              </div>
+              <div class="finance-summary-col">
+                <div class="finance-sub-label">クー活合計</div>
+                <div class="finance-sub-value" id="kuuTotal">0円</div>
+              </div>
+            </div>
+          </div>
+</div>
          </div>
          <div class="kuu-extra" id="kuuExtra">
            <div class="kuu-extra-line">
@@ -1343,40 +1472,28 @@ function syncKuuInput(){
 }
 function renderKuuSummary(charge){
  const period=document.getElementById('periodSel').value || 'month';
- const extra=document.getElementById('kuuExtra');
- const box=document.getElementById('chargeSummaryBox');
  const kuu=getKuuValue();
  const hundredCount=getHundredYenChargeCount();
- const hundredEl=document.getElementById('hundredYenCount');
- if(hundredEl)hundredEl.textContent=`×${hundredCount}回`;
+
+ const grandLabel=document.getElementById('grandTotalLabel');
+ const grandValue=document.getElementById('monthGrandTotal');
  const chargeLabel=document.getElementById('chargeTotalLabel');
- const grandLabel=document.querySelector('#monthGrandTotal')?.previousElementSibling;
+ const chargeValue=document.getElementById('chargeTotal');
+ const kuuValue=document.getElementById('kuuTotal');
+ const hundredEl=document.getElementById('hundredYenCount');
 
- if(kuu>0){
-   document.getElementById('kuuTotal').textContent=`${fmt(kuu)}円`;
-   document.getElementById('monthGrandTotal').textContent=`${fmt(charge+kuu)}円`;
-
-   if(grandLabel){
-     grandLabel.textContent=
-       period==='year' ? '当年合計' :
-       period==='all' ? '全期間合計' :
-       '当月合計';
-   }
-
-   if(chargeLabel)chargeLabel.textContent='チャージ額合計';
-   extra.classList.add('show');
-   box.classList.add('has-kuu');
- }else{
-   if(grandLabel){
-     grandLabel.textContent=
-       period==='year' ? '当年合計' :
-       period==='all' ? '全期間合計' :
-       '当月合計';
-   }
-   if(chargeLabel)chargeLabel.textContent='チャージ合計';
-   extra.classList.remove('show');
-   box.classList.remove('has-kuu');
+ if(grandLabel){
+   grandLabel.textContent=
+     period==='year' ? '当年合計' :
+     period==='all' ? '全期間合計' :
+     '当月合計';
  }
+
+ if(grandValue)grandValue.textContent=`${fmt(charge+kuu)} pt`;
+ if(chargeLabel)chargeLabel.textContent='チャージ額合計';
+ if(chargeValue)chargeValue.textContent=`${fmt(charge)} pt`;
+ if(kuuValue)kuuValue.textContent=`${fmt(kuu)}円`;
+ if(hundredEl)hundredEl.textContent=`×${hundredCount}回`;
 }
 
 function renderFinance(){
@@ -1693,7 +1810,7 @@ function toggleExtraTabs(){
   saveUIState(activeView);
 }
 
-// ===== 個人版 v3.3.1: 端末モード + 共有クリップボード =====
+// ===== 個人版 v3.4: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
 const DEFAULT_CLIP_FIELDS=5;
@@ -2270,7 +2387,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </body>
 </html>
 <style>
-/* THE fool head 個人版 v3.3.1: クエスト宝箱アイコン */
+/* THE fool head 個人版 v3.4: クエスト宝箱アイコン */
 .num.done::after{content:none !important;}
 @media(max-width:430px){
   .num:not(.done)::before{font-size:28px !important;}
