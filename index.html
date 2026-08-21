@@ -1124,6 +1124,8 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 .bottomnav.xwin-five-tabs .navbtn{min-width:0;font-size:12px;line-height:1.15;padding-left:1px;padding-right:1px}
 
+
+.xwin-subtab{background:#dff4ff !important}.xwin-subtab.active{background:#111 !important;color:#fff !important;border-color:#111 !important}
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -1132,21 +1134,50 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.3</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.4</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
    <div class="tabs-wrap"><div class="tabs" id="tabs"></div><button class="add" id="addTab">＋</button></div>
-   <div class="toolbar">
+   <div class="toolbar" id="questTabToolbar">
      <button class="action" id="renameTab">タブ名変更</button>
      <button class="action" id="backupBtn">保存</button>
      <button class="action" id="restoreBtn">読み込み</button>
      <input id="restoreFile" type="file" accept=".json,application/json" hidden>
    </div>
-   <div class="card">
+   <div class="card" id="questTabContent">
      
      <div class="pages" id="pages"></div>
      <div class="note">宝箱をタップすると、その日の「月/日」を記録します。もう一度タップすると解除します。左右スワイプは、速く操作しても1ページずつ移動します。<br>最後に開いていたタブを記憶し、次回起動時も同じタブを開きます。変更内容は即時保存されます。</div>
+   <div id="xWinPanel" class="hidden">
+    <div class="card xwin-card">
+      <div class="xwin-title-row">
+        <h2>𝕏 当選管理</h2>
+        <span class="badge">端末内保存</span>
+      </div>
+      <div class="xwin-toolbar">
+        <button class="action" id="xWinResetBtn" type="button">当選状況<br>リセット</button>
+        <button class="action" id="xWinEditBtn" type="button">編集</button>
+        <button class="action" id="xWinAddBtn" type="button">＋ 追加</button>
+        <button class="action" id="xWinExportBtn" type="button">CSV出力</button>
+      </div>
+      <div class="xwin-control-row">
+        <button class="xwin-sort-btn" id="xWinSortBtn" type="button">並び替え ↑</button>
+        <div class="xwin-counts" id="xWinCounts">当選0垢　外れ0垢　総数0垢</div>
+      </div>
+      <div class="xwin-filter-row">
+        <button class="xwin-filter-btn active" data-xfilter="all" type="button">すべて</button>
+        <button class="xwin-filter-btn" data-xfilter="won" type="button">当選</button>
+        <button class="xwin-filter-btn" data-xfilter="lost" type="button">非当選</button>
+      </div>
+      <div class="xwin-head">
+        <div>アカウント</div>
+        <div>当選</div>
+        <div>当選URL / メモ</div>
+      </div>
+      <div id="xWinRows"></div>
+    </div>
+   </div>
    </div>
  </section>
 
@@ -1286,46 +1317,13 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
     <div id="phraseFields"></div>
   </section>
 
-
-  <section id="xWinView" class="view">
-    <div class="card xwin-card">
-      <div class="xwin-title-row">
-        <h2>𝕏 当選管理</h2>
-        <span class="badge">端末内保存</span>
-      </div>
-      <div class="xwin-toolbar">
-        <button class="action" id="xWinResetBtn" type="button">当選状況<br>リセット</button>
-        <button class="action" id="xWinEditBtn" type="button">編集</button>
-        <button class="action" id="xWinAddBtn" type="button">＋ 追加</button>
-        <button class="action" id="xWinExportBtn" type="button">CSV出力</button>
-      </div>
-      <div class="xwin-control-row">
-        <button class="xwin-sort-btn" id="xWinSortBtn" type="button">並び替え ↑</button>
-        <div class="xwin-counts" id="xWinCounts">当選0垢　外れ0垢　総数0垢</div>
-      </div>
-      <div class="xwin-filter-row">
-        <button class="xwin-filter-btn active" data-xfilter="all" type="button">すべて</button>
-        <button class="xwin-filter-btn" data-xfilter="won" type="button">当選</button>
-        <button class="xwin-filter-btn" data-xfilter="lost" type="button">非当選</button>
-      </div>
-      <div class="xwin-head">
-        <div>アカウント</div>
-        <div>当選</div>
-        <div>当選URL / メモ</div>
-      </div>
-      <div id="xWinRows"></div>
-    </div>
-  </section>
-
 </div>
 
 <nav class="bottomnav">
- <button class="navbtn" data-view="clearView">✓ クエスト管理</button>
+ <button class="navbtn" data-view="clearView">✓ 当選管理</button>
  <button class="navbtn" data-view="financeView">￥ 収支</button>
  <button class="navbtn active" data-view="clipboardView">▣ 動作記録</button>
  <button class="navbtn" data-view="phraseView">▤ 定型文</button>
- 
- <button class="navbtn" data-view="xWinView">𝕏 当選管理</button>
 </nav>
 
 
@@ -1386,10 +1384,13 @@ function num(v){const n=Number(String(v??'').replace(/,/g,''));return Number.isF
 
 function renderTabs(){
  const el=document.getElementById('tabs');el.innerHTML='';
+ const xw=document.createElement('div');xw.className='tab-item';
+ const xb=document.createElement('button');xb.className='tab xwin-subtab'+(window.xWinSubtabActive?' active':'');xb.textContent='𝕏 当選管理';
+ xb.onclick=()=>{window.xWinSubtabActive=true;renderClear();};xw.appendChild(xb);el.appendChild(xw);
  data.tabs.forEach(t=>{
    const w=document.createElement('div');w.className='tab-item';
-   const b=document.createElement('button');b.className='tab'+(t.id===data.active?' active':'');b.textContent=t.name;
-   b.onclick=()=>{data.active=t.id;save();renderClear()};
+   const b=document.createElement('button');b.className='tab'+(!window.xWinSubtabActive&&t.id===data.active?' active':'');b.textContent=t.name;
+   b.onclick=()=>{window.xWinSubtabActive=false;data.active=t.id;save();renderClear()};
    const r=document.createElement('button');r.className='tab-reset';r.textContent='↺';r.title='このタブをリセット';
    r.onclick=e=>{e.stopPropagation();if(confirm(`「${t.name}」をリセットしますか？`)){t.done={};save();renderClear()}};
    w.append(b,r);el.appendChild(w);
@@ -1459,7 +1460,11 @@ function enableSinglePageSwipe(){
 }
 
 function renderClear(){
- renderTabs();const tab=activeTab();const pages=document.getElementById('pages');pages.innerHTML='';
+ renderTabs();
+ const qt=document.getElementById('questTabToolbar'), qc=document.getElementById('questTabContent'), xp=document.getElementById('xWinPanel');
+ if(window.xWinSubtabActive){qt?.classList.add('hidden');qc?.classList.add('hidden');xp?.classList.remove('hidden');renderXWin();return;}
+ qt?.classList.remove('hidden');qc?.classList.remove('hidden');xp?.classList.add('hidden');
+ const tab=activeTab();const pages=document.getElementById('pages');pages.innerHTML='';
  for(let p=0;p<5;p++){
    const sec=document.createElement('div');sec.className='page';
    const start=p*30+1;sec.innerHTML=`<div class="page-heading"><div class="page-tab-name">${esc(tab.name)}</div><div class="page-title">${start}〜${start+29}</div></div>`;
@@ -1928,7 +1933,7 @@ function restoreLastUIState(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
+  const xWinBtn=null;
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1940,11 +1945,11 @@ function restoreLastUIState(){
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
-    nav?.classList.add('xwin-five-tabs');
-    if(nav)nav.style.gridTemplateColumns='repeat(5,minmax(0,1fr))';
+    nav?.classList.remove('xwin-five-tabs');
+    if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
     if(toggle)toggle.textContent='共有タブだけを表示する';
 
-    const allowed=['clearView','financeView','clipboardView','phraseView','xWinView'];
+    const allowed=['clearView','financeView','clipboardView','phraseView'];
     activateView(allowed.includes(savedView)?savedView:'clipboardView');
   }else{
     questBtn?.classList.add('hidden');
@@ -1967,7 +1972,7 @@ function setSharedOnlyStartup(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
+  const xWinBtn=null;
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1989,7 +1994,7 @@ function toggleExtraTabs(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
+  const xWinBtn=null;
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1999,8 +2004,8 @@ function toggleExtraTabs(){
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
-    nav?.classList.add('xwin-five-tabs');
-    if(nav)nav.style.gridTemplateColumns='repeat(5,minmax(0,1fr))';
+    nav?.classList.remove('xwin-five-tabs');
+    if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
     if(toggle)toggle.textContent='共有タブだけを表示する';
   }else{
     questBtn?.classList.add('hidden');
@@ -2113,6 +2118,7 @@ function activateView(viewId){
   document.getElementById(viewId)?.classList.add('active');
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
   document.querySelector(`.navbtn[data-view="${viewId}"]`)?.classList.add('active');
+  if(viewId==='clearView')renderClear();
   if(viewId==='financeView')renderFinance();
   if(viewId==='phraseView'){
     if(!clipState.fields.length){
@@ -2126,7 +2132,6 @@ function activateView(viewId){
       renderClipboardFields();
     }
   }
-  if(viewId==='xWinView')renderXWin();
 }
 function applyDeviceMode(forceOpen=false){
   const mode=getDeviceMode();
@@ -2725,6 +2730,7 @@ document.getElementById('sharedMemo')?.addEventListener('input',e=>{
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.view).classList.add('active');
+ if(b.dataset.view==='clearView')renderClear();
  if(b.dataset.view==='financeView')renderFinance();
  if(b.dataset.view==='clipboardView'){
    if(!clipState.fields.length){
@@ -2738,7 +2744,6 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
    }
    renderPhrases();
  }
- if(b.dataset.view==='xWinView')renderXWin();
  saveUIState(b.dataset.view);
 });
 document.getElementById('nameModal').onclick=e=>{if(e.target.id==='nameModal')e.currentTarget.classList.remove('show')};
