@@ -1126,7 +1126,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.4.7: 当選管理へX管理統合 ===== */
+/* ===== 個人版 v3.4.9: 当選管理へX管理統合 ===== */
 .xwin-sub-tab{
   background:#111 !important;
   color:#fff !important;
@@ -1184,6 +1184,58 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   .bottomnav{gap:4px !important;padding-left:6px !important;padding-right:6px !important}
   .bottomnav .navbtn{font-size:12px;line-height:1.15;padding:8px 2px;min-height:40px}
   .app{padding-bottom:130px !important}
+}
+
+
+/* ===== 個人版 v3.4.8: フリーメモ / 当選管理タブ長押し削除 ===== */
+.free-card{padding:10px !important}
+.free-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.free-title-row h2{margin:0}
+.free-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.free-toolbar .action{min-width:0}
+.free-head,.free-row{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.48fr) 54px;
+  gap:6px;
+  align-items:center;
+}
+.free-head{
+  padding:2px 3px 6px;
+  color:#4c5960;
+  font-size:11px;
+  font-weight:1000;
+}
+.free-row{
+  padding:8px 3px;
+  border-top:2px dashed #cbd2d6;
+}
+.free-name,.free-url{
+  width:100% !important;
+  min-width:0 !important;
+  border:3px solid var(--line) !important;
+  border-radius:11px !important;
+  background:#fff !important;
+  padding:9px 7px !important;
+  font-weight:800 !important;
+}
+.free-name{font-size:13px !important}
+.free-url{font-size:12px !important}
+.free-open{
+  width:54px;height:42px;padding:0;border:3px solid var(--line);border-radius:11px;
+  background:#e5f1ff;font-weight:1000
+}
+.free-empty{text-align:center;color:var(--muted);font-weight:900;padding:18px 4px}
+.quest-tab-delete-hint{
+  margin:4px 0 0;
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+}
+@media(max-width:430px){
+  .free-head,.free-row{grid-template-columns:minmax(0,.78fr) minmax(0,1.52fr) 50px;gap:4px}
+  .free-name{font-size:12px !important;padding:8px 5px !important}
+  .free-url{font-size:11px !important;padding:8px 5px !important}
+  .free-open{width:50px;height:38px;font-size:11px}
 }
 
 </style>
@@ -1377,6 +1429,27 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
     <div id="phraseFields"></div>
   </section>
+
+  <section id="freeMemoView" class="view">
+    <div class="card free-card">
+      <div class="free-title-row">
+        <h2>メモ</h2>
+        <span class="badge">端末内保存</span>
+      </div>
+      <div class="free-toolbar">
+        <button class="action" id="freeMemoAddBtn" type="button">＋ 追加</button>
+        <button class="action" id="freeMemoExportBtn" type="button">CSV出力</button>
+      </div>
+      <div class="free-head">
+        <div>名称</div>
+        <div>URL</div>
+        <div>コピー</div>
+      </div>
+      <div id="freeMemoRows"></div>
+      <div class="note">名称とURLを自由に登録できます。「コピー」でURLをクリップボードへコピーします。変更内容はこの端末内に保存されます。</div>
+    </div>
+  </section>
+
 </div>
 
 <nav class="bottomnav">
@@ -1384,6 +1457,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
  <button class="navbtn" data-view="financeView">￥ 収支</button>
  <button class="navbtn active" data-view="clipboardView">▣ 動作記録</button>
  <button class="navbtn" data-view="phraseView">▤ 定型文</button>
+ <button class="navbtn" data-view="freeMemoView">メモ</button>
 </nav>
 <div id="navDragToast" class="nav-drag-toast">タブを移動中</div>
 
@@ -3048,6 +3122,227 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 
 
+
+
+<script>
+/* ===== 個人版 v3.4.8: フリーメモ ===== */
+(function(){
+  const KEY='the_fool_head_free_memo_v1';
+  const rowsEl=document.getElementById('freeMemoRows');
+  if(!rowsEl)return;
+
+  let data=load();
+
+  function uid(){
+    return (crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`);
+  }
+  function load(){
+    try{
+      const v=JSON.parse(localStorage.getItem(KEY)||'[]');
+      if(Array.isArray(v))return v.map(x=>({
+        id:String(x?.id||uid()),
+        name:String(x?.name||''),
+        url:String(x?.url||'')
+      }));
+    }catch(e){}
+    return [];
+  }
+  function save(){
+    localStorage.setItem(KEY,JSON.stringify(data));
+  }
+  function normalizeUrl(u){
+    const s=String(u||'').trim();
+    if(!s)return '';
+    return /^https?:\/\//i.test(s)?s:'https://'+s;
+  }
+  function render(){
+    rowsEl.innerHTML='';
+    if(!data.length){
+      const empty=document.createElement('div');
+      empty.className='free-empty';
+      empty.textContent='まだ登録がありません';
+      rowsEl.appendChild(empty);
+      return;
+    }
+    data.forEach((item,index)=>{
+      const row=document.createElement('div');
+      row.className='free-row';
+
+      const name=document.createElement('input');
+      name.className='free-name';
+      name.type='text';
+      name.placeholder='名称';
+      name.value=item.name;
+      name.addEventListener('input',()=>{item.name=name.value;save()});
+
+      const url=document.createElement('input');
+      url.className='free-url';
+      url.type='text';
+      url.inputMode='url';
+      url.placeholder='https://...';
+      url.value=item.url;
+      url.addEventListener('input',()=>{item.url=url.value;save()});
+
+      const open=document.createElement('button');
+      open.className='free-open';
+      open.type='button';
+      open.textContent='コピー';
+      open.addEventListener('click',async()=>{
+        const value=String(item.url||'').trim();
+        if(!value){alert('URLを入力してください。');return}
+        try{
+          await navigator.clipboard.writeText(value);
+          const before=open.textContent;
+          open.textContent='✓';
+          if(navigator.vibrate)navigator.vibrate(20);
+          setTimeout(()=>open.textContent=before,650);
+        }catch(e){
+          const ta=document.createElement('textarea');
+          ta.value=value;
+          ta.style.position='fixed';
+          ta.style.opacity='0';
+          document.body.appendChild(ta);
+          ta.select();
+          try{document.execCommand('copy');open.textContent='✓';setTimeout(()=>open.textContent='コピー',650)}
+          finally{ta.remove()}
+        }
+      });
+
+      let timer=null;
+      const cancel=()=>{if(timer){clearTimeout(timer);timer=null}};
+      const startDelete=()=>{
+        cancel();
+        timer=setTimeout(()=>{
+          timer=null;
+          if(confirm(`「${item.name||'名称なし'}」を削除しますか？`)){
+            data.splice(index,1);
+            save();
+            render();
+          }
+        },700);
+      };
+      row.addEventListener('touchstart',startDelete,{passive:true});
+      row.addEventListener('touchmove',cancel,{passive:true});
+      row.addEventListener('touchend',cancel);
+      row.addEventListener('touchcancel',cancel);
+      row.addEventListener('mousedown',startDelete);
+      row.addEventListener('mouseup',cancel);
+      row.addEventListener('mouseleave',cancel);
+      row.addEventListener('contextmenu',e=>e.preventDefault());
+
+      row.append(name,url,open);
+      rowsEl.appendChild(row);
+    });
+  }
+
+  document.getElementById('freeMemoAddBtn')?.addEventListener('click',()=>{
+    data.push({id:uid(),name:'',url:''});
+    save();render();
+    setTimeout(()=>rowsEl.querySelector('.free-row:last-child .free-name')?.focus(),30);
+  });
+
+  document.getElementById('freeMemoExportBtn')?.addEventListener('click',()=>{
+    const rows=[['名称','URL'],...data.map(x=>[x.name,x.url])];
+    const csv=rows.map(r=>r.map(v=>{
+      const s=String(v??'');
+      return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
+    }).join(',')).join('\r\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+    const u=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=u;a.download='フリーメモ.csv';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),1000);
+  });
+
+  render();
+})();
+</script>
+
+
+<script>
+/* ===== 個人版 v3.4.8: 当選管理の追加タブを長押し削除 ===== */
+(function(){
+  const tabsEl=document.getElementById('tabs');
+  if(!tabsEl)return;
+
+  let timer=null;
+  let pressedBtn=null;
+  let startX=0,startY=0;
+  let suppressClick=false;
+
+  function cancel(){
+    if(timer){clearTimeout(timer);timer=null}
+    pressedBtn=null;
+  }
+
+  tabsEl.addEventListener('pointerdown',e=>{
+    const btn=e.target.closest('.tab');
+    if(!btn)return;
+
+    // X当選管理は固定・削除不可
+    if(btn.classList.contains('xwin-sub-tab'))return;
+
+    const normalButtons=[...tabsEl.querySelectorAll('.tab:not(.xwin-sub-tab)')];
+    const idx=normalButtons.indexOf(btn);
+    if(idx<0 || !data?.tabs?.[idx])return;
+
+    pressedBtn=btn;
+    startX=e.clientX;
+    startY=e.clientY;
+
+    timer=setTimeout(()=>{
+      timer=null;
+      const tab=data.tabs[idx];
+      if(!tab)return;
+
+      // 最後の通常タブ1個は残す
+      if(data.tabs.length<=1){
+        alert('通常タブは最低1個必要なため削除できません。');
+        return;
+      }
+
+      suppressClick=true;
+      if(navigator.vibrate)navigator.vibrate(25);
+
+      if(confirm(`「${tab.name}」を削除しますか？
+このタブの1〜150の記録も削除されます。`)){
+        const deletingId=tab.id;
+        data.tabs.splice(idx,1);
+
+        if(data.active===deletingId){
+          data.active=data.tabs[Math.max(0,idx-1)]?.id || data.tabs[0]?.id;
+        }
+
+        xWinSubActive=false;
+        save();
+        renderClear();
+      }
+
+      setTimeout(()=>suppressClick=false,250);
+    },700);
+  },{passive:true});
+
+  tabsEl.addEventListener('pointermove',e=>{
+    if(!pressedBtn)return;
+    if(Math.hypot(e.clientX-startX,e.clientY-startY)>9)cancel();
+  },{passive:true});
+
+  tabsEl.addEventListener('pointerup',cancel);
+  tabsEl.addEventListener('pointercancel',cancel);
+
+  tabsEl.addEventListener('click',e=>{
+    if(suppressClick){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },true);
+
+  tabsEl.addEventListener('contextmenu',e=>{
+    if(e.target.closest('.tab'))e.preventDefault();
+  });
+})();
+</script>
 
 </body>
 </html>
