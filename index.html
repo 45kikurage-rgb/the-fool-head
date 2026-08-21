@@ -1125,7 +1125,67 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 .bottomnav.xwin-five-tabs .navbtn{min-width:0;font-size:12px;line-height:1.15;padding-left:1px;padding-right:1px}
 
 
-.xwin-subtab{background:#dff4ff !important}.xwin-subtab.active{background:#111 !important;color:#fff !important;border-color:#111 !important}
+
+/* ===== 個人版 v3.4.6: 当選管理へX管理統合 ===== */
+.xwin-sub-tab{
+  background:#111 !important;
+  color:#fff !important;
+  border-color:#111 !important;
+}
+.xwin-sub-tab.active{
+  background:#111 !important;
+  color:#fff !important;
+  box-shadow:0 3px 0 rgba(0,0,0,.28),0 0 0 3px #ffd84d inset !important;
+}
+#xWinSubPanel.hidden,#questTabContent.hidden{display:none !important}
+
+/* ===== 個人版 v3.4.6: 下部タブ2段・均等幅・長押し移動 ===== */
+.bottomnav{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:stretch !important;
+  gap:5px !important;
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom)) !important;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.bottomnav .navbtn{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  min-height:42px;
+  position:relative;
+  touch-action:manipulation;
+  transition:transform .14s ease,opacity .14s ease,box-shadow .14s ease;
+}
+.bottomnav[data-cols="1"] .navbtn:not(.hidden){flex-basis:100% !important;width:100% !important}
+.bottomnav[data-cols="2"] .navbtn:not(.hidden){flex-basis:calc(50% - 3px) !important;width:calc(50% - 3px) !important}
+.bottomnav[data-cols="3"] .navbtn:not(.hidden){flex-basis:calc(33.333% - 4px) !important;width:calc(33.333% - 4px) !important}
+.bottomnav[data-cols="4"] .navbtn:not(.hidden){flex-basis:calc(25% - 4px) !important;width:calc(25% - 4px) !important}
+.bottomnav .navbtn.nav-drag-source{opacity:.18 !important}
+.bottomnav .navbtn.nav-drop-target{outline:4px solid #7a5cff;outline-offset:-2px;transform:scale(.95)}
+.bottomnav .navbtn.nav-drop-target::after{
+  content:"ここへ";position:absolute;left:50%;top:-17px;transform:translateX(-50%);
+  background:#7a5cff;color:#fff;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:1000;white-space:nowrap;z-index:3
+}
+.nav-drag-ghost{
+  position:fixed;z-index:99999;pointer-events:none;transform:translate(-50%,-50%) scale(1.07);
+  border:3px solid var(--line);border-radius:14px;background:#fff;color:#111;font-weight:1000;
+  display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.42);opacity:.96
+}
+.nav-drag-toast{
+  position:fixed;left:50%;bottom:118px;transform:translateX(-50%) translateY(10px);z-index:99998;
+  background:rgba(20,20,20,.92);color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:1000;
+  opacity:0;pointer-events:none;transition:.18s ease;white-space:nowrap
+}
+.nav-drag-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.app{padding-bottom:135px !important}
+@media(max-width:430px){
+  .bottomnav{gap:4px !important;padding-left:6px !important;padding-right:6px !important}
+  .bottomnav .navbtn{font-size:12px;line-height:1.15;padding:8px 2px;min-height:40px}
+  .app{padding-bottom:130px !important}
+}
+
 </style>
 <link rel="apple-touch-icon" href="./icon-any.png?v=1.2">
 
@@ -1134,23 +1194,25 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.4</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.6</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
    <div class="tabs-wrap"><div class="tabs" id="tabs"></div><button class="add" id="addTab">＋</button></div>
-   <div class="toolbar" id="questTabToolbar">
-     <button class="action" id="renameTab">タブ名変更</button>
-     <button class="action" id="backupBtn">保存</button>
-     <button class="action" id="restoreBtn">読み込み</button>
-     <input id="restoreFile" type="file" accept=".json,application/json" hidden>
+   <div id="questTabContent">
+     <div class="toolbar" id="questToolbar">
+       <button class="action" id="renameTab">タブ名変更</button>
+       <button class="action" id="backupBtn">保存</button>
+       <button class="action" id="restoreBtn">読み込み</button>
+       <input id="restoreFile" type="file" accept=".json,application/json" hidden>
+     </div>
+     <div class="card" id="questPagesCard">
+       <div class="pages" id="pages"></div>
+       <div class="note">宝箱をタップすると、その日の「月/日」を記録します。もう一度タップすると解除します。左右スワイプは、速く操作しても1ページずつ移動します。<br>最後に開いていたタブを記憶し、次回起動時も同じタブを開きます。変更内容は即時保存されます。</div>
+     </div>
    </div>
-   <div class="card" id="questTabContent">
-     
-     <div class="pages" id="pages"></div>
-     <div class="note">宝箱をタップすると、その日の「月/日」を記録します。もう一度タップすると解除します。左右スワイプは、速く操作しても1ページずつ移動します。<br>最後に開いていたタブを記憶し、次回起動時も同じタブを開きます。変更内容は即時保存されます。</div>
-   <div id="xWinPanel" class="hidden">
-    <div class="card xwin-card">
+   <div id="xWinSubPanel" class="hidden">
+     <div class="card xwin-card">
       <div class="xwin-title-row">
         <h2>𝕏 当選管理</h2>
         <span class="badge">端末内保存</span>
@@ -1177,7 +1239,6 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
       </div>
       <div id="xWinRows"></div>
     </div>
-   </div>
    </div>
  </section>
 
@@ -1316,7 +1377,6 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
     <div id="phraseFields"></div>
   </section>
-
 </div>
 
 <nav class="bottomnav">
@@ -1325,6 +1385,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
  <button class="navbtn active" data-view="clipboardView">▣ 動作記録</button>
  <button class="navbtn" data-view="phraseView">▤ 定型文</button>
 </nav>
+<div id="navDragToast" class="nav-drag-toast">タブを移動中</div>
 
 
 <div class="setup-modal" id="deviceSetupModal">
@@ -1382,15 +1443,17 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function fmt(n){return Number(n||0).toLocaleString('ja-JP')}
 function num(v){const n=Number(String(v??'').replace(/,/g,''));return Number.isFinite(n)?n:0}
 
+let xWinSubActive=false;
 function renderTabs(){
  const el=document.getElementById('tabs');el.innerHTML='';
  const xw=document.createElement('div');xw.className='tab-item';
- const xb=document.createElement('button');xb.className='tab xwin-subtab'+(window.xWinSubtabActive?' active':'');xb.textContent='𝕏 当選管理';
- xb.onclick=()=>{window.xWinSubtabActive=true;renderClear();};xw.appendChild(xb);el.appendChild(xw);
+ const xb=document.createElement('button');xb.className='tab xwin-sub-tab'+(xWinSubActive?' active':'');xb.textContent='𝕏 当選管理';
+ xb.onclick=()=>{xWinSubActive=true;renderClear();renderXWin()};
+ xw.appendChild(xb);el.appendChild(xw);
  data.tabs.forEach(t=>{
    const w=document.createElement('div');w.className='tab-item';
-   const b=document.createElement('button');b.className='tab'+(!window.xWinSubtabActive&&t.id===data.active?' active':'');b.textContent=t.name;
-   b.onclick=()=>{window.xWinSubtabActive=false;data.active=t.id;save();renderClear()};
+   const b=document.createElement('button');b.className='tab'+(!xWinSubActive&&t.id===data.active?' active':'');b.textContent=t.name;
+   b.onclick=()=>{xWinSubActive=false;data.active=t.id;save();renderClear()};
    const r=document.createElement('button');r.className='tab-reset';r.textContent='↺';r.title='このタブをリセット';
    r.onclick=e=>{e.stopPropagation();if(confirm(`「${t.name}」をリセットしますか？`)){t.done={};save();renderClear()}};
    w.append(b,r);el.appendChild(w);
@@ -1461,9 +1524,19 @@ function enableSinglePageSwipe(){
 
 function renderClear(){
  renderTabs();
- const qt=document.getElementById('questTabToolbar'), qc=document.getElementById('questTabContent'), xp=document.getElementById('xWinPanel');
- if(window.xWinSubtabActive){qt?.classList.add('hidden');qc?.classList.add('hidden');xp?.classList.remove('hidden');renderXWin();return;}
- qt?.classList.remove('hidden');qc?.classList.remove('hidden');xp?.classList.add('hidden');
+ const questContent=document.getElementById('questTabContent');
+ const xPanel=document.getElementById('xWinSubPanel');
+ const addBtn=document.getElementById('addTab');
+ if(xWinSubActive){
+   questContent?.classList.add('hidden');
+   xPanel?.classList.remove('hidden');
+   if(addBtn)addBtn.style.visibility='hidden';
+   renderXWin();
+   return;
+ }
+ questContent?.classList.remove('hidden');
+ xPanel?.classList.add('hidden');
+ if(addBtn)addBtn.style.visibility='visible';
  const tab=activeTab();const pages=document.getElementById('pages');pages.innerHTML='';
  for(let p=0;p<5;p++){
    const sec=document.createElement('div');sec.className='page';
@@ -1483,8 +1556,8 @@ function renderClear(){
 
 let nameMode='add';
 function openName(mode){nameMode=mode;const m=document.getElementById('nameModal');document.getElementById('modalTitle').textContent=mode==='add'?'新しいタブ':'タブ名変更';document.getElementById('tabNameInput').value=mode==='add'?'':activeTab().name;m.classList.add('show')}
-document.getElementById('addTab').onclick=()=>openName('add');
-document.getElementById('renameTab').onclick=()=>openName('rename');
+document.getElementById('addTab').onclick=()=>{xWinSubActive=false;openName('add')};
+document.getElementById('renameTab').onclick=()=>{xWinSubActive=false;openName('rename')};
 document.getElementById('cancelName').onclick=()=>document.getElementById('nameModal').classList.remove('show');
 document.getElementById('saveName').onclick=()=>{const v=document.getElementById('tabNameInput').value.trim();if(!v)return;if(nameMode==='add'){const t={id:uid(),name:v,done:{}};data.tabs.push(t);data.active=t.id}else activeTab().name=v;save();document.getElementById('nameModal').classList.remove('show');renderClear()};
 
@@ -1927,13 +2000,14 @@ function saveUIState(viewId){
 
 function restoreLastUIState(){
   const savedExtra=localStorage.getItem(EXTRA_TABS_KEY)==='1';
-  const savedView=localStorage.getItem(LAST_VIEW_KEY)||'clipboardView';
+  let savedView=localStorage.getItem(LAST_VIEW_KEY)||'clipboardView';
+  if(savedView==='xWinView'){savedView='clearView';xWinSubActive=true;}
 
   const questBtn=document.querySelector('.navbtn[data-view="clearView"]');
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=null;
+  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1945,7 +2019,7 @@ function restoreLastUIState(){
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
-    nav?.classList.remove('xwin-five-tabs');
+    nav?.classList.add('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
     if(toggle)toggle.textContent='共有タブだけを表示する';
 
@@ -1972,7 +2046,7 @@ function setSharedOnlyStartup(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=null;
+  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -1994,7 +2068,7 @@ function toggleExtraTabs(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
-  const xWinBtn=null;
+  const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
 
@@ -2004,7 +2078,7 @@ function toggleExtraTabs(){
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
-    nav?.classList.remove('xwin-five-tabs');
+    nav?.classList.add('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
     if(toggle)toggle.textContent='共有タブだけを表示する';
   }else{
@@ -2730,7 +2804,6 @@ document.getElementById('sharedMemo')?.addEventListener('input',e=>{
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.view).classList.add('active');
- if(b.dataset.view==='clearView')renderClear();
  if(b.dataset.view==='financeView')renderFinance();
  if(b.dataset.view==='clipboardView'){
    if(!clipState.fields.length){
@@ -2754,6 +2827,66 @@ renderClipboardFields();
 renderPhrases();
 renderXWin();
 restoreLastUIState();
+</script>
+
+
+<script>
+/* ===== 個人版 v3.4.6: 下部タブ長押し並び替え ===== */
+(function(){
+  const nav=document.querySelector('.bottomnav');
+  if(!nav)return;
+  const ORDER_KEY='the_fool_head_bottom_nav_order_v1';
+  let timer=null,dragBtn=null,ghost=null,dragging=false,startX=0,startY=0,suppressClick=false;
+  const toast=document.getElementById('navDragToast');
+  const allButtons=()=>[...nav.querySelectorAll('.navbtn')];
+  const visibleButtons=()=>allButtons().filter(b=>!b.classList.contains('hidden'));
+  function updateColumns(){
+    const n=visibleButtons().length;
+    const cols=n<=2?Math.max(1,n):Math.ceil(n/2);
+    nav.dataset.cols=String(Math.min(4,cols));
+  }
+  function saveOrder(){localStorage.setItem(ORDER_KEY,JSON.stringify(allButtons().map(b=>b.dataset.view)))}
+  function restoreOrder(){
+    try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');if(!Array.isArray(order))return;
+      order.forEach(v=>{const b=nav.querySelector(`.navbtn[data-view="${CSS.escape(v)}"]`);if(b)nav.appendChild(b)});
+    }catch(e){}
+  }
+  function showToast(t){if(!toast)return;toast.textContent=t;toast.classList.add('show')}
+  function hideToast(ms=0){if(!toast)return;setTimeout(()=>toast.classList.remove('show'),ms)}
+  function removeGhost(){if(ghost){ghost.remove();ghost=null}}
+  function createGhost(btn,x,y){
+    removeGhost();const r=btn.getBoundingClientRect();ghost=document.createElement('div');ghost.className='nav-drag-ghost';
+    ghost.textContent=btn.textContent.trim();ghost.style.width=r.width+'px';ghost.style.height=r.height+'px';document.body.appendChild(ghost);moveGhost(x,y)
+  }
+  function moveGhost(x,y){if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px'}}
+  function clearTargets(){allButtons().forEach(b=>b.classList.remove('nav-drop-target'))}
+  function reset(){clearTimeout(timer);clearTargets();dragBtn?.classList.remove('nav-drag-source');removeGhost();dragBtn=null;dragging=false}
+  nav.addEventListener('pointerdown',e=>{
+    const btn=e.target.closest('.navbtn');if(!btn||btn.classList.contains('hidden'))return;
+    dragBtn=btn;startX=e.clientX;startY=e.clientY;
+    timer=setTimeout(()=>{dragging=true;suppressClick=true;btn.classList.add('nav-drag-source');createGhost(btn,e.clientX,e.clientY);showToast('タブを移動中');
+      try{btn.setPointerCapture(e.pointerId)}catch(_){} if(navigator.vibrate)navigator.vibrate([30,20,30]);},500);
+  },{passive:true});
+  nav.addEventListener('pointermove',e=>{
+    if(!dragBtn)return;
+    if(!dragging){if(Math.hypot(e.clientX-startX,e.clientY-startY)>9)clearTimeout(timer);return}
+    e.preventDefault();moveGhost(e.clientX,e.clientY);clearTargets();
+    const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('.navbtn');if(t&&t!==dragBtn&&!t.classList.contains('hidden'))t.classList.add('nav-drop-target');
+  },{passive:false});
+  nav.addEventListener('pointerup',e=>{
+    clearTimeout(timer);
+    if(dragging&&dragBtn){e.preventDefault();const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('.navbtn');
+      if(t&&t!==dragBtn&&!t.classList.contains('hidden')){const r=t.getBoundingClientRect();const before=(e.clientY<r.top+r.height/2)||((Math.abs(e.clientY-(r.top+r.height/2))<r.height*.2)&&e.clientX<r.left+r.width/2);nav.insertBefore(dragBtn,before?t:t.nextSibling);saveOrder();showToast('並び順を変更しました');hideToast(650)}else hideToast(200);
+    }
+    reset();setTimeout(()=>suppressClick=false,180);
+  },{passive:false});
+  nav.addEventListener('pointercancel',()=>{reset();hideToast(0)});
+  nav.addEventListener('contextmenu',e=>{if(e.target.closest('.navbtn'))e.preventDefault()});
+  nav.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopImmediatePropagation()}},true);
+  restoreOrder();updateColumns();
+  new MutationObserver(updateColumns).observe(nav,{subtree:true,attributes:true,attributeFilter:['class','style']});
+  window.addEventListener('resize',updateColumns);
+})();
 </script>
 
 <script>
