@@ -1126,7 +1126,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.4.9: 当選管理へX管理統合 ===== */
+/* ===== 個人版 v3.5.0: 当選管理へX管理統合 ===== */
 .xwin-sub-tab{
   background:#111 !important;
   color:#fff !important;
@@ -2081,6 +2081,7 @@ function restoreLastUIState(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
+  const memoBtn=document.querySelector('.navbtn[data-view="freeMemoView"]');
   const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
@@ -2092,18 +2093,20 @@ function restoreLastUIState(){
     financeBtn?.classList.remove('hidden');
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
+    memoBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
     nav?.classList.add('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
     if(toggle)toggle.textContent='共有タブだけを表示する';
 
-    const allowed=['clearView','financeView','clipboardView','phraseView'];
+    const allowed=['clearView','financeView','clipboardView','phraseView','freeMemoView'];
     activateView(allowed.includes(savedView)?savedView:'clipboardView');
   }else{
     questBtn?.classList.add('hidden');
     financeBtn?.classList.add('hidden');
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
+    memoBtn?.classList.add('hidden');
     xWinBtn?.classList.add('hidden');
     nav?.classList.remove('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(2,1fr)';
@@ -2120,6 +2123,7 @@ function setSharedOnlyStartup(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
+  const memoBtn=document.querySelector('.navbtn[data-view="freeMemoView"]');
   const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
@@ -2142,6 +2146,7 @@ function toggleExtraTabs(){
   const financeBtn=document.querySelector('.navbtn[data-view="financeView"]');
   const logBtn=document.querySelector('.navbtn[data-view="clipboardView"]');
   const phraseBtn=document.querySelector('.navbtn[data-view="phraseView"]');
+  const memoBtn=document.querySelector('.navbtn[data-view="freeMemoView"]');
   const xWinBtn=document.querySelector('.navbtn[data-view="xWinView"]');
   const nav=document.querySelector('.bottomnav');
   const toggle=document.getElementById('showMoreTabsBtn');
@@ -2151,6 +2156,7 @@ function toggleExtraTabs(){
     financeBtn?.classList.remove('hidden');
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
+    memoBtn?.classList.remove('hidden');
     xWinBtn?.classList.remove('hidden');
     nav?.classList.add('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
@@ -2160,6 +2166,7 @@ function toggleExtraTabs(){
     financeBtn?.classList.add('hidden');
     logBtn?.classList.remove('hidden');
     phraseBtn?.classList.remove('hidden');
+    memoBtn?.classList.add('hidden');
     xWinBtn?.classList.add('hidden');
     nav?.classList.remove('xwin-five-tabs');
     if(nav)nav.style.gridTemplateColumns='repeat(2,1fr)';
@@ -2905,19 +2912,19 @@ restoreLastUIState();
 
 
 <script>
-/* ===== 個人版 v3.4.7: メインタブ長押し並び替え・確定修正版 ===== */
+/* ===== 個人版 v3.5.0: メインタブ長押し並び替え・安定版 ===== */
 (function(){
   const nav=document.querySelector('.bottomnav');
   if(!nav)return;
 
   const ORDER_KEY='the_fool_head_bottom_nav_order_v1';
-  let timer=null;
-  let dragBtn=null;
+  let pressTimer=null;
+  let source=null;
   let ghost=null;
   let dragging=false;
   let startX=0,startY=0;
+  let lastTarget=null;
   let suppressClick=false;
-  let orderChanged=false;
 
   const toast=document.getElementById('navDragToast');
   const allButtons=()=>[...nav.querySelectorAll(':scope > .navbtn')];
@@ -2926,21 +2933,23 @@ restoreLastUIState();
   function updateColumns(){
     const n=visibleButtons().length;
     const cols=n<=2?Math.max(1,n):Math.ceil(n/2);
-    nav.dataset.cols=String(Math.min(4,cols));
+    nav.dataset.cols=String(Math.min(cols,4));
   }
 
   function saveOrder(){
-    const order=allButtons().map(b=>b.dataset.view);
-    localStorage.setItem(ORDER_KEY,JSON.stringify(order));
+    localStorage.setItem(
+      ORDER_KEY,
+      JSON.stringify(allButtons().map(b=>b.dataset.view))
+    );
   }
 
   function restoreOrder(){
     try{
       const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');
-      if(!Array.isArray(order)||!order.length)return;
+      if(!Array.isArray(order))return;
       order.forEach(view=>{
-        const btn=nav.querySelector(`:scope > .navbtn[data-view="${CSS.escape(view)}"]`);
-        if(btn)nav.appendChild(btn);
+        const b=allButtons().find(x=>x.dataset.view===view);
+        if(b)nav.appendChild(b);
       });
     }catch(e){}
   }
@@ -2950,14 +2959,9 @@ restoreLastUIState();
     toast.textContent=text;
     toast.classList.add('show');
   }
-
-  function hideToast(ms=0){
+  function hideToast(delay=0){
     if(!toast)return;
-    setTimeout(()=>toast.classList.remove('show'),ms);
-  }
-
-  function removeGhost(){
-    if(ghost){ghost.remove();ghost=null}
+    setTimeout(()=>toast.classList.remove('show'),delay);
   }
 
   function createGhost(btn,x,y){
@@ -2971,123 +2975,131 @@ restoreLastUIState();
     document.body.appendChild(ghost);
     moveGhost(x,y);
   }
-
   function moveGhost(x,y){
     if(!ghost)return;
     ghost.style.left=x+'px';
     ghost.style.top=y+'px';
   }
+  function removeGhost(){
+    if(ghost){ghost.remove();ghost=null}
+  }
 
-  function clearTargets(){
-    allButtons().forEach(b=>b.classList.remove('nav-drop-target'));
+  function clearTarget(){
+    visibleButtons().forEach(b=>b.classList.remove('nav-drop-target'));
+    lastTarget=null;
+  }
+
+  // 指の位置から最も近い「別の」タブを探す。
+  // pointer captureや2段配置でも elementFromPoint に依存しない。
+  function nearestTarget(x,y){
+    let best=null,bestD=Infinity;
+    visibleButtons().forEach(btn=>{
+      if(btn===source)return;
+      const r=btn.getBoundingClientRect();
+      const cx=r.left+r.width/2;
+      const cy=r.top+r.height/2;
+      const d=(cx-x)*(cx-x)+(cy-y)*(cy-y);
+      if(d<bestD){bestD=d;best=btn}
+    });
+    return best;
+  }
+
+  function markTarget(btn){
+    visibleButtons().forEach(b=>b.classList.remove('nav-drop-target'));
+    lastTarget=btn||null;
+    if(lastTarget)lastTarget.classList.add('nav-drop-target');
+  }
+
+  function commitMove(){
+    if(!source||!lastTarget||source===lastTarget)return false;
+
+    const current=visibleButtons();
+    const from=current.indexOf(source);
+    const to=current.indexOf(lastTarget);
+    if(from<0||to<0)return false;
+
+    // 元の可視順で「ターゲットの場所」に確実に差し込む。
+    if(from<to){
+      nav.insertBefore(source,lastTarget.nextSibling);
+    }else{
+      nav.insertBefore(source,lastTarget);
+    }
+
+    saveOrder();
+    updateColumns();
+    return true;
   }
 
   function reset(){
-    clearTimeout(timer);
-    clearTargets();
-    if(dragBtn)dragBtn.classList.remove('nav-drag-source');
+    clearTimeout(pressTimer);
+    visibleButtons().forEach(b=>b.classList.remove('nav-drop-target','nav-drag-source'));
     removeGhost();
-    dragBtn=null;
+    source=null;
+    lastTarget=null;
     dragging=false;
-    orderChanged=false;
-  }
-
-  function moveSourceToTarget(source,target){
-    if(!source||!target||source===target)return false;
-
-    const list=allButtons();
-    const from=list.indexOf(source);
-    const to=list.indexOf(target);
-    if(from<0||to<0)return false;
-
-    // 指が別タブへ入った時点で、そのタブの位置まで実際にDOMを移動。
-    // これにより「指を離すと元に戻る」挙動を防ぐ。
-    if(from<to){
-      nav.insertBefore(source,target.nextSibling);
-    }else{
-      nav.insertBefore(source,target);
-    }
-    return true;
   }
 
   nav.addEventListener('pointerdown',e=>{
     const btn=e.target.closest('.bottomnav > .navbtn');
     if(!btn||btn.classList.contains('hidden'))return;
 
-    dragBtn=btn;
+    source=btn;
     startX=e.clientX;
     startY=e.clientY;
-    orderChanged=false;
 
-    timer=setTimeout(()=>{
+    pressTimer=setTimeout(()=>{
       dragging=true;
       suppressClick=true;
-      btn.classList.add('nav-drag-source');
-      createGhost(btn,e.clientX,e.clientY);
+      source.classList.add('nav-drag-source');
+      createGhost(source,e.clientX,e.clientY);
       showToast('メインタブを移動中');
-      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+      try{source.setPointerCapture(e.pointerId)}catch(_){}
       if(navigator.vibrate)navigator.vibrate([30,20,30]);
     },500);
   },{passive:true});
 
   nav.addEventListener('pointermove',e=>{
-    if(!dragBtn)return;
+    if(!source)return;
 
     if(!dragging){
-      if(Math.hypot(e.clientX-startX,e.clientY-startY)>9){
-        clearTimeout(timer);
+      if(Math.hypot(e.clientX-startX,e.clientY-startY)>10){
+        clearTimeout(pressTimer);
       }
       return;
     }
 
     e.preventDefault();
     moveGhost(e.clientX,e.clientY);
-    clearTargets();
 
-    // pointer capture中でも座標位置のタブを取得
-    const hit=document.elementFromPoint(e.clientX,e.clientY);
-    const target=hit?.closest('.bottomnav > .navbtn');
-
-    if(target && target!==dragBtn && !target.classList.contains('hidden')){
-      target.classList.add('nav-drop-target');
-
-      if(moveSourceToTarget(dragBtn,target)){
-        orderChanged=true;
-        updateColumns();
-      }
-    }
+    const target=nearestTarget(e.clientX,e.clientY);
+    markTarget(target);
   },{passive:false});
 
   nav.addEventListener('pointerup',e=>{
-    clearTimeout(timer);
+    clearTimeout(pressTimer);
 
-    if(dragging&&dragBtn){
+    if(dragging&&source){
       e.preventDefault();
 
-      // pointermoveで確定した現在のDOM順をそのまま保存
-      saveOrder();
-      updateColumns();
+      // pointermoveが少ない端末向けに、離した位置でも再判定
+      const target=nearestTarget(e.clientX,e.clientY);
+      if(target)markTarget(target);
 
-      showToast(orderChanged ? '並び順を変更しました' : '位置は変更していません');
-      hideToast(650);
+      const changed=commitMove();
+      showToast(changed?'並び順を変更しました':'位置は変更していません');
+      hideToast(700);
     }
 
     reset();
-    setTimeout(()=>suppressClick=false,220);
+    setTimeout(()=>suppressClick=false,250);
   },{passive:false});
 
   nav.addEventListener('pointercancel',()=>{
-    if(dragging)saveOrder();
     reset();
     hideToast(0);
-    setTimeout(()=>suppressClick=false,220);
+    setTimeout(()=>suppressClick=false,250);
   });
 
-  nav.addEventListener('contextmenu',e=>{
-    if(e.target.closest('.bottomnav > .navbtn'))e.preventDefault();
-  });
-
-  // 長押し並び替え後に元のタブクリックが発火しないよう抑止
   nav.addEventListener('click',e=>{
     if(suppressClick){
       e.preventDefault();
@@ -3095,16 +3107,18 @@ restoreLastUIState();
     }
   },true);
 
+  nav.addEventListener('contextmenu',e=>{
+    if(e.target.closest('.bottomnav > .navbtn'))e.preventDefault();
+  });
+
   restoreOrder();
   updateColumns();
 
-  // hidden状態の切替だけ監視。DOM順は変更しない。
   new MutationObserver(updateColumns).observe(nav,{
     subtree:true,
     attributes:true,
     attributeFilter:['class']
   });
-
   window.addEventListener('resize',updateColumns);
 })();
 </script>
