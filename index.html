@@ -1126,7 +1126,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.4.6: 当選管理へX管理統合 ===== */
+/* ===== 個人版 v3.4.7: 当選管理へX管理統合 ===== */
 .xwin-sub-tab{
   background:#111 !important;
   color:#fff !important;
@@ -2831,60 +2831,206 @@ restoreLastUIState();
 
 
 <script>
-/* ===== 個人版 v3.4.6: 下部タブ長押し並び替え ===== */
+/* ===== 個人版 v3.4.7: メインタブ長押し並び替え・確定修正版 ===== */
 (function(){
   const nav=document.querySelector('.bottomnav');
   if(!nav)return;
+
   const ORDER_KEY='the_fool_head_bottom_nav_order_v1';
-  let timer=null,dragBtn=null,ghost=null,dragging=false,startX=0,startY=0,suppressClick=false;
+  let timer=null;
+  let dragBtn=null;
+  let ghost=null;
+  let dragging=false;
+  let startX=0,startY=0;
+  let suppressClick=false;
+  let orderChanged=false;
+
   const toast=document.getElementById('navDragToast');
-  const allButtons=()=>[...nav.querySelectorAll('.navbtn')];
+  const allButtons=()=>[...nav.querySelectorAll(':scope > .navbtn')];
   const visibleButtons=()=>allButtons().filter(b=>!b.classList.contains('hidden'));
+
   function updateColumns(){
     const n=visibleButtons().length;
     const cols=n<=2?Math.max(1,n):Math.ceil(n/2);
     nav.dataset.cols=String(Math.min(4,cols));
   }
-  function saveOrder(){localStorage.setItem(ORDER_KEY,JSON.stringify(allButtons().map(b=>b.dataset.view)))}
+
+  function saveOrder(){
+    const order=allButtons().map(b=>b.dataset.view);
+    localStorage.setItem(ORDER_KEY,JSON.stringify(order));
+  }
+
   function restoreOrder(){
-    try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');if(!Array.isArray(order))return;
-      order.forEach(v=>{const b=nav.querySelector(`.navbtn[data-view="${CSS.escape(v)}"]`);if(b)nav.appendChild(b)});
+    try{
+      const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');
+      if(!Array.isArray(order)||!order.length)return;
+      order.forEach(view=>{
+        const btn=nav.querySelector(`:scope > .navbtn[data-view="${CSS.escape(view)}"]`);
+        if(btn)nav.appendChild(btn);
+      });
     }catch(e){}
   }
-  function showToast(t){if(!toast)return;toast.textContent=t;toast.classList.add('show')}
-  function hideToast(ms=0){if(!toast)return;setTimeout(()=>toast.classList.remove('show'),ms)}
-  function removeGhost(){if(ghost){ghost.remove();ghost=null}}
-  function createGhost(btn,x,y){
-    removeGhost();const r=btn.getBoundingClientRect();ghost=document.createElement('div');ghost.className='nav-drag-ghost';
-    ghost.textContent=btn.textContent.trim();ghost.style.width=r.width+'px';ghost.style.height=r.height+'px';document.body.appendChild(ghost);moveGhost(x,y)
+
+  function showToast(text){
+    if(!toast)return;
+    toast.textContent=text;
+    toast.classList.add('show');
   }
-  function moveGhost(x,y){if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px'}}
-  function clearTargets(){allButtons().forEach(b=>b.classList.remove('nav-drop-target'))}
-  function reset(){clearTimeout(timer);clearTargets();dragBtn?.classList.remove('nav-drag-source');removeGhost();dragBtn=null;dragging=false}
+
+  function hideToast(ms=0){
+    if(!toast)return;
+    setTimeout(()=>toast.classList.remove('show'),ms);
+  }
+
+  function removeGhost(){
+    if(ghost){ghost.remove();ghost=null}
+  }
+
+  function createGhost(btn,x,y){
+    removeGhost();
+    const r=btn.getBoundingClientRect();
+    ghost=document.createElement('div');
+    ghost.className='nav-drag-ghost';
+    ghost.textContent=btn.textContent.trim();
+    ghost.style.width=r.width+'px';
+    ghost.style.height=r.height+'px';
+    document.body.appendChild(ghost);
+    moveGhost(x,y);
+  }
+
+  function moveGhost(x,y){
+    if(!ghost)return;
+    ghost.style.left=x+'px';
+    ghost.style.top=y+'px';
+  }
+
+  function clearTargets(){
+    allButtons().forEach(b=>b.classList.remove('nav-drop-target'));
+  }
+
+  function reset(){
+    clearTimeout(timer);
+    clearTargets();
+    if(dragBtn)dragBtn.classList.remove('nav-drag-source');
+    removeGhost();
+    dragBtn=null;
+    dragging=false;
+    orderChanged=false;
+  }
+
+  function moveSourceToTarget(source,target){
+    if(!source||!target||source===target)return false;
+
+    const list=allButtons();
+    const from=list.indexOf(source);
+    const to=list.indexOf(target);
+    if(from<0||to<0)return false;
+
+    // 指が別タブへ入った時点で、そのタブの位置まで実際にDOMを移動。
+    // これにより「指を離すと元に戻る」挙動を防ぐ。
+    if(from<to){
+      nav.insertBefore(source,target.nextSibling);
+    }else{
+      nav.insertBefore(source,target);
+    }
+    return true;
+  }
+
   nav.addEventListener('pointerdown',e=>{
-    const btn=e.target.closest('.navbtn');if(!btn||btn.classList.contains('hidden'))return;
-    dragBtn=btn;startX=e.clientX;startY=e.clientY;
-    timer=setTimeout(()=>{dragging=true;suppressClick=true;btn.classList.add('nav-drag-source');createGhost(btn,e.clientX,e.clientY);showToast('タブを移動中');
-      try{btn.setPointerCapture(e.pointerId)}catch(_){} if(navigator.vibrate)navigator.vibrate([30,20,30]);},500);
+    const btn=e.target.closest('.bottomnav > .navbtn');
+    if(!btn||btn.classList.contains('hidden'))return;
+
+    dragBtn=btn;
+    startX=e.clientX;
+    startY=e.clientY;
+    orderChanged=false;
+
+    timer=setTimeout(()=>{
+      dragging=true;
+      suppressClick=true;
+      btn.classList.add('nav-drag-source');
+      createGhost(btn,e.clientX,e.clientY);
+      showToast('メインタブを移動中');
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+      if(navigator.vibrate)navigator.vibrate([30,20,30]);
+    },500);
   },{passive:true});
+
   nav.addEventListener('pointermove',e=>{
     if(!dragBtn)return;
-    if(!dragging){if(Math.hypot(e.clientX-startX,e.clientY-startY)>9)clearTimeout(timer);return}
-    e.preventDefault();moveGhost(e.clientX,e.clientY);clearTargets();
-    const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('.navbtn');if(t&&t!==dragBtn&&!t.classList.contains('hidden'))t.classList.add('nav-drop-target');
+
+    if(!dragging){
+      if(Math.hypot(e.clientX-startX,e.clientY-startY)>9){
+        clearTimeout(timer);
+      }
+      return;
+    }
+
+    e.preventDefault();
+    moveGhost(e.clientX,e.clientY);
+    clearTargets();
+
+    // pointer capture中でも座標位置のタブを取得
+    const hit=document.elementFromPoint(e.clientX,e.clientY);
+    const target=hit?.closest('.bottomnav > .navbtn');
+
+    if(target && target!==dragBtn && !target.classList.contains('hidden')){
+      target.classList.add('nav-drop-target');
+
+      if(moveSourceToTarget(dragBtn,target)){
+        orderChanged=true;
+        updateColumns();
+      }
+    }
   },{passive:false});
+
   nav.addEventListener('pointerup',e=>{
     clearTimeout(timer);
-    if(dragging&&dragBtn){e.preventDefault();const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('.navbtn');
-      if(t&&t!==dragBtn&&!t.classList.contains('hidden')){const r=t.getBoundingClientRect();const before=(e.clientY<r.top+r.height/2)||((Math.abs(e.clientY-(r.top+r.height/2))<r.height*.2)&&e.clientX<r.left+r.width/2);nav.insertBefore(dragBtn,before?t:t.nextSibling);saveOrder();showToast('並び順を変更しました');hideToast(650)}else hideToast(200);
+
+    if(dragging&&dragBtn){
+      e.preventDefault();
+
+      // pointermoveで確定した現在のDOM順をそのまま保存
+      saveOrder();
+      updateColumns();
+
+      showToast(orderChanged ? '並び順を変更しました' : '位置は変更していません');
+      hideToast(650);
     }
-    reset();setTimeout(()=>suppressClick=false,180);
+
+    reset();
+    setTimeout(()=>suppressClick=false,220);
   },{passive:false});
-  nav.addEventListener('pointercancel',()=>{reset();hideToast(0)});
-  nav.addEventListener('contextmenu',e=>{if(e.target.closest('.navbtn'))e.preventDefault()});
-  nav.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopImmediatePropagation()}},true);
-  restoreOrder();updateColumns();
-  new MutationObserver(updateColumns).observe(nav,{subtree:true,attributes:true,attributeFilter:['class','style']});
+
+  nav.addEventListener('pointercancel',()=>{
+    if(dragging)saveOrder();
+    reset();
+    hideToast(0);
+    setTimeout(()=>suppressClick=false,220);
+  });
+
+  nav.addEventListener('contextmenu',e=>{
+    if(e.target.closest('.bottomnav > .navbtn'))e.preventDefault();
+  });
+
+  // 長押し並び替え後に元のタブクリックが発火しないよう抑止
+  nav.addEventListener('click',e=>{
+    if(suppressClick){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },true);
+
+  restoreOrder();
+  updateColumns();
+
+  // hidden状態の切替だけ監視。DOM順は変更しない。
+  new MutationObserver(updateColumns).observe(nav,{
+    subtree:true,
+    attributes:true,
+    attributeFilter:['class']
+  });
+
   window.addEventListener('resize',updateColumns);
 })();
 </script>
