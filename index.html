@@ -1090,13 +1090,18 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 }
 
 
-/* ===== 個人版 v3.4.3: X当選管理（端末内保存のみ） ===== */
+/* ===== 個人版 v3.4.5: X当選管理（端末内保存のみ） ===== */
 .xwin-card{padding:10px !important}
 .xwin-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .xwin-title-row h2{margin:0}
-.xwin-toolbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:8px}
+.xwin-toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:8px}
 .xwin-toolbar .action{min-width:0;padding:10px 5px;font-size:14px;line-height:1.2}
-.xwin-note{margin:2px 2px 10px;color:var(--muted);font-size:11px;line-height:1.45;font-weight:800}
+.xwin-control-row{display:flex;align-items:center;gap:6px;margin:3px 2px 10px}
+.xwin-sort-btn{flex:0 0 auto;border:3px solid var(--line);border-radius:10px;background:#fff;padding:7px 9px;font-size:11px;font-weight:1000}
+.xwin-counts{margin-left:auto;text-align:right;font-size:11px;line-height:1.25;font-weight:1000;white-space:nowrap}
+.xwin-filter-row{display:flex;gap:5px;margin:0 2px 9px}
+.xwin-filter-btn{flex:1;border:3px solid var(--line);border-radius:10px;background:#fff;padding:7px 3px;font-size:11px;font-weight:1000}
+.xwin-filter-btn.active{background:#111;color:#fff}
 .xwin-head,.xwin-row{display:grid;grid-template-columns:66px 72px minmax(0,1fr);gap:6px;align-items:center}
 .xwin-head{padding:2px 3px 6px;color:#4c5960;font-size:11px;font-weight:1000;text-align:center}
 .xwin-head div:last-child{text-align:left;padding-left:5px}
@@ -1113,8 +1118,9 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
  .xwin-account{font-size:18px}
  .xwin-account-input{font-size:17px !important}
  .xwin-url{font-size:11px !important;padding:8px 6px !important}
- .xwin-toolbar{gap:5px}
- .xwin-toolbar .action{font-size:12px;padding:9px 3px}
+ .xwin-toolbar{gap:4px}
+ .xwin-toolbar .action{font-size:11px;padding:8px 2px}
+ .xwin-sort-btn,.xwin-counts,.xwin-filter-btn{font-size:10px}
 }
 .bottomnav.xwin-five-tabs .navbtn{min-width:0;font-size:12px;line-height:1.15;padding-left:1px;padding-right:1px}
 
@@ -1288,11 +1294,20 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
         <span class="badge">端末内保存</span>
       </div>
       <div class="xwin-toolbar">
+        <button class="action" id="xWinResetBtn" type="button">当選状況<br>リセット</button>
         <button class="action" id="xWinEditBtn" type="button">編集</button>
         <button class="action" id="xWinAddBtn" type="button">＋ 追加</button>
         <button class="action" id="xWinExportBtn" type="button">CSV出力</button>
       </div>
-      <div class="xwin-note">宝箱をタップすると当選ON/OFF。編集中は3桁番号を変更できます。通常表示で番号を長押しすると削除できます。X当選管理のデータは共有せず、この端末内だけに保存します。</div>
+      <div class="xwin-control-row">
+        <button class="xwin-sort-btn" id="xWinSortBtn" type="button">並び替え ↑</button>
+        <div class="xwin-counts" id="xWinCounts">当選0垢　外れ0垢　総数0垢</div>
+      </div>
+      <div class="xwin-filter-row">
+        <button class="xwin-filter-btn active" data-xfilter="all" type="button">すべて</button>
+        <button class="xwin-filter-btn" data-xfilter="won" type="button">当選</button>
+        <button class="xwin-filter-btn" data-xfilter="lost" type="button">非当選</button>
+      </div>
       <div class="xwin-head">
         <div>アカウント</div>
         <div>当選</div>
@@ -2512,6 +2527,8 @@ function addClipboardField(){
 // ===== 個人版 v3.4.3: X当選管理（共有なし / localStorage専用） =====
 const XWIN_STORAGE_KEY='the_fool_head_xwin_local_v1';
 let xWinEditMode=false;
+let xWinFilter='all';
+let xWinSortAsc=true;
 let xWinData=loadXWinData();
 
 function makeDefaultXWinData(){
@@ -2539,7 +2556,21 @@ function renderXWin(){
   if(!wrap)return;
   wrap.innerHTML='';
 
-  xWinData.accounts.forEach((account,index)=>{
+  const wonCount=xWinData.accounts.filter(a=>a.won).length;
+  const totalCount=xWinData.accounts.length;
+  const lostCount=totalCount-wonCount;
+  const counts=document.getElementById('xWinCounts');
+  if(counts)counts.textContent=`当選${wonCount}垢　外れ${lostCount}垢　総数${totalCount}垢`;
+
+  const visible=xWinData.accounts
+    .map((account,index)=>({account,index}))
+    .filter(({account})=>xWinFilter==='all' || (xWinFilter==='won' ? account.won : !account.won))
+    .sort((a,b)=>{
+      const av=Number(a.account.no)||0, bv=Number(b.account.no)||0;
+      return xWinSortAsc ? av-bv : bv-av;
+    });
+
+  visible.forEach(({account,index})=>{
     const row=document.createElement('div');
     row.className='xwin-row';
 
@@ -2603,9 +2634,10 @@ function renderXWin(){
   });
 }
 function nextXWinNo(){
-  const used=new Set(xWinData.accounts.map(a=>Number(a.no)).filter(n=>Number.isInteger(n)&&n>=0&&n<=999));
-  for(let n=1;n<=999;n++)if(!used.has(n))return String(n).padStart(3,'0');
-  return '999';
+  if(!xWinData.accounts.length)return '001';
+  const nums=xWinData.accounts.map(a=>Number(a.no)).filter(n=>Number.isFinite(n));
+  const last=nums.length ? Math.max(...nums) : 0;
+  return String(Math.min(last+1,999)).padStart(3,'0');
 }
 function exportXWinCsv(){
   const rows=[['アカウント名','当選URL']];
@@ -2627,6 +2659,26 @@ function exportXWinCsv(){
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(blobUrl),1000);
 }
+
+
+
+document.getElementById('xWinSortBtn')?.addEventListener('click',()=>{
+  xWinSortAsc=!xWinSortAsc;
+  document.getElementById('xWinSortBtn').textContent=xWinSortAsc?'並び替え ↑':'並び替え ↓';
+  renderXWin();
+});
+document.querySelectorAll('[data-xfilter]').forEach(btn=>btn.addEventListener('click',()=>{
+  xWinFilter=btn.dataset.xfilter;
+  document.querySelectorAll('[data-xfilter]').forEach(b=>b.classList.toggle('active',b===btn));
+  renderXWin();
+}));
+
+document.getElementById('xWinResetBtn')?.addEventListener('click',()=>{
+  if(!confirm('当選状況だけをすべてリセットしますか？\nアカウント番号とURL・メモは残ります。'))return;
+  xWinData.accounts.forEach(a=>a.won=false);
+  saveXWinData();
+  renderXWin();
+});
 
 document.getElementById('xWinEditBtn')?.addEventListener('click',()=>{
   xWinEditMode=!xWinEditMode;
