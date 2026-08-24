@@ -1437,7 +1437,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.6.5: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.7: Gアカウント管理 ===== */
 .gacc-card{padding:12px}
 .gacc-topbar{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .gacc-title{margin:0;font-size:20px;font-weight:1000}
@@ -1488,7 +1488,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 <style>
-/* v3.6.5 Gアカウント: 5列・5集計 */
+/* v3.6.7 Gアカウント: 5列・5集計 */
 .gacc-summary-five{grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:5px !important}
 .gacc-summary-five .gacc-stat{min-width:0;padding:7px 2px !important}
 .gacc-summary-five .gacc-stat b{font-size:9px !important;letter-spacing:-.25px}
@@ -1508,7 +1508,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 </style>
 
 <style>
-/* v3.6.5 Gアカウント: 作成日・LINE・Gアカウントを均等幅、状態色分け */
+/* v3.6.7 Gアカウント: 作成日・LINE・Gアカウントを均等幅、状態色分け */
 #gaccMainPanel .gacc-head,
 #gaccMainPanel .gacc-row{
   grid-template-columns:48px 58px repeat(3,minmax(0,1fr)) !important;
@@ -1523,6 +1523,12 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 #gaccMainPanel .gacc-status[data-state="created"]{color:#1565c0 !important;}
 #gaccMainPanel .gacc-status[data-state="using"]{color:#d39b00 !important;}
 #gaccMainPanel .gacc-status[data-state="used"]{color:#d32f2f !important;}
+</style>
+<style>
+/* v3.6.7 Gアカウント: 日付欄右側チェックボックス */
+#gaccMainPanel .gacc-datecheck{display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:3px;align-items:center;min-width:0}
+#gaccMainPanel .gacc-datecheck .gacc-date{width:100%;min-width:0}
+#gaccMainPanel .gacc-check{width:28px;height:28px;padding:0;border:2px solid var(--line);border-radius:4px;background:#fff;font-size:19px;line-height:1;font-weight:1000;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 </style>
 </head>
 <body>
@@ -3793,7 +3799,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 
 <script>
-/* ===== 個人版 v3.6.5: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.7: Gアカウント管理 ===== */
 const GACC_KEY='adventure_gaccount_v1';
 const GACC_VIEW_KEY='adventure_gaccount_visible_v1';
 const GACC_API='/api/gaccounts';
@@ -3846,7 +3852,7 @@ function renderGaccRows(tab){
   const shown=nums.slice(0,gaccLimit);
   shown.forEach(n=>{
     const row=tab.rows[n]||{};const st=rowState(row);const el=document.createElement('div');el.className='gacc-row';
-    el.innerHTML=`<div class="gacc-num">${String(n).padStart(3,'0')}</div><div class="gacc-status" data-state="${st}">${stateJa(st)}</div><button class="gacc-date" data-kind="created" type="button">${displayGaccDate(row.created)}</button><button class="gacc-date" data-kind="line" type="button">${displayGaccDate(row.lineUsed)}</button><button class="gacc-date" data-kind="gaccount" type="button">${displayGaccDate(row.gUsed)}</button>`;
+    el.innerHTML=`<div class="gacc-num">${String(n).padStart(3,'0')}</div><div class="gacc-status" data-state="${st}">${stateJa(st)}</div><div class="gacc-datecheck"><button class="gacc-date" data-kind="created" type="button">${displayGaccDate(row.created)}</button><button class="gacc-check" data-check="created" type="button">${row.checkCreated?'✓':''}</button></div><div class="gacc-datecheck"><button class="gacc-date" data-kind="line" type="button">${displayGaccDate(row.lineUsed)}</button><button class="gacc-check" data-check="line" type="button">${row.checkLine?'✓':''}</button></div><div class="gacc-datecheck"><button class="gacc-date" data-kind="gaccount" type="button">${displayGaccDate(row.gUsed)}</button><button class="gacc-check" data-check="gaccount" type="button">${row.checkGaccount?'✓':''}</button></div>`;
     el.querySelector('[data-kind="created"]').onclick=()=>{
       const r=tab.rows[n]||(tab.rows[n]={});
       if(r.lineUsed||r.gUsed){alert(`${String(n).padStart(3,'0')} は使用中または使用済みのため、作成日は変更できません。`);return}
@@ -3874,6 +3880,9 @@ function renderGaccRows(tab){
       }
       saveGaccData();renderGAccounts();
     };
+    el.querySelector('[data-check="created"]').onclick=()=>{const r=tab.rows[n]||(tab.rows[n]={});r.checkCreated=!r.checkCreated;saveGaccData();renderGAccounts()};
+    el.querySelector('[data-check="line"]').onclick=()=>{const r=tab.rows[n]||(tab.rows[n]={});r.checkLine=!r.checkLine;saveGaccData();renderGAccounts()};
+    el.querySelector('[data-check="gaccount"]').onclick=()=>{const r=tab.rows[n]||(tab.rows[n]={});r.checkGaccount=!r.checkGaccount;saveGaccData();renderGAccounts()};
     wrap.appendChild(el);
   });
   if(!shown.length)wrap.innerHTML='<div class="gacc-empty">該当するアカウントはありません</div>';
