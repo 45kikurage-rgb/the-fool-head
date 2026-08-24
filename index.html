@@ -1437,7 +1437,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.6.3: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.4: Gアカウント管理 ===== */
 .gacc-card{padding:12px}
 .gacc-topbar{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .gacc-title{margin:0;font-size:20px;font-weight:1000}
@@ -1488,7 +1488,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 <style>
-/* v3.6.3 Gアカウント: 5列・5集計 */
+/* v3.6.4 Gアカウント: 5列・5集計 */
 .gacc-summary-five{grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:5px !important}
 .gacc-summary-five .gacc-stat{min-width:0;padding:7px 2px !important}
 .gacc-summary-five .gacc-stat b{font-size:9px !important;letter-spacing:-.25px}
@@ -3775,7 +3775,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 
 <script>
-/* ===== 個人版 v3.6.3: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.4: Gアカウント管理 ===== */
 const GACC_KEY='adventure_gaccount_v1';
 const GACC_VIEW_KEY='adventure_gaccount_visible_v1';
 const GACC_API='/api/gaccounts';
@@ -3838,13 +3838,23 @@ function renderGaccRows(tab){
     };
     el.querySelector('[data-kind="line"]').onclick=()=>{
       const r=tab.rows[n]||(tab.rows[n]={});
-      if(r.lineUsed){alert(`${String(n).padStart(3,'0')} はLINEで使用済みです。\n再使用防止のため解除できません。`);return}
-      if(confirm(`${String(n).padStart(3,'0')} をLINEで使用した状態にしますか？`)){if(!r.created)r.created=todayISO();r.lineUsed=todayISO();saveGaccData();renderGAccounts()}
+      if(r.lineUsed){
+        r.lineUsed='';
+      }else{
+        if(!r.created)r.created=todayISO();
+        r.lineUsed=todayISO();
+      }
+      saveGaccData();renderGAccounts();
     };
     el.querySelector('[data-kind="gaccount"]').onclick=()=>{
       const r=tab.rows[n]||(tab.rows[n]={});
-      if(r.gUsed){alert(`${String(n).padStart(3,'0')} はGアカウントで使用済みです。\n再使用防止のため解除できません。`);return}
-      if(confirm(`${String(n).padStart(3,'0')} をGアカウントで使用した状態にしますか？`)){if(!r.created)r.created=todayISO();r.gUsed=todayISO();saveGaccData();renderGAccounts()}
+      if(r.gUsed){
+        r.gUsed='';
+      }else{
+        if(!r.created)r.created=todayISO();
+        r.gUsed=todayISO();
+      }
+      saveGaccData();renderGAccounts();
     };
     wrap.appendChild(el);
   });
