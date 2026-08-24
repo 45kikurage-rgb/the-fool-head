@@ -1437,7 +1437,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 
-/* ===== 個人版 v3.6.8: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.9: Gアカウント管理 ===== */
 .gacc-card{padding:12px}
 .gacc-topbar{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .gacc-title{margin:0;font-size:20px;font-weight:1000}
@@ -1488,7 +1488,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 
 <style>
-/* v3.6.8 Gアカウント: 5列・5集計 */
+/* v3.6.9 Gアカウント: 5列・5集計 */
 .gacc-summary-five{grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:5px !important}
 .gacc-summary-five .gacc-stat{min-width:0;padding:7px 2px !important}
 .gacc-summary-five .gacc-stat b{font-size:9px !important;letter-spacing:-.25px}
@@ -1508,7 +1508,7 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 </style>
 
 <style>
-/* v3.6.8 Gアカウント: 作成日・LINE・Gアカウントを均等幅、状態色分け */
+/* v3.6.9 Gアカウント: 作成日・LINE・Gアカウントを均等幅、状態色分け */
 #gaccMainPanel .gacc-head,
 #gaccMainPanel .gacc-row{
   grid-template-columns:48px 58px repeat(3,minmax(0,1fr)) !important;
@@ -1525,13 +1525,13 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 #gaccMainPanel .gacc-status[data-state="used"]{color:#d32f2f !important;}
 </style>
 <style>
-/* v3.6.8 Gアカウント: 日付欄右側チェックボックス */
+/* v3.6.9 Gアカウント: 日付欄右側チェックボックス */
 #gaccMainPanel .gacc-datecheck{display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:3px;align-items:center;min-width:0}
 #gaccMainPanel .gacc-datecheck .gacc-date{width:100%;min-width:0}
 #gaccMainPanel .gacc-check{width:28px;height:28px;padding:0;border:2px solid var(--line);border-radius:4px;background:#fff;font-size:19px;line-height:1;font-weight:1000;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 </style>
 <style>
-/* v3.6.8 Gアカウント: 最右端に独立チェック1個 */
+/* v3.6.9 Gアカウント: 最右端に独立チェック1個 */
 #gaccMainPanel .gacc-head,
 #gaccMainPanel .gacc-row{
   grid-template-columns:48px 58px repeat(3,minmax(0,1fr)) 30px !important;
@@ -1542,6 +1542,51 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   width:28px;height:28px;padding:0;border:2px solid var(--line);border-radius:4px;
   background:#fff;font-size:19px;line-height:1;font-weight:1000;
   display:flex;align-items:center;justify-content:center;box-sizing:border-box
+}
+</style>
+<style>
+/* v3.6.9 メモ小タブ / 3アクション */
+.free-subtabs-row{display:flex;align-items:center;gap:6px;margin:2px 0 9px}
+.free-subtabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;padding:2px 0}
+.free-subtabs::-webkit-scrollbar{display:none}
+.free-subtab-item{display:flex;align-items:stretch;flex:none}
+.free-subtab{
+  border:3px solid var(--line);border-radius:11px 0 0 11px;background:#fff;
+  padding:8px 10px;font-weight:1000;white-space:nowrap;max-width:150px;
+  overflow:hidden;text-overflow:ellipsis
+}
+.free-subtab.active{background:var(--yellow)}
+.free-subtab-delete{
+  width:30px;border:3px solid var(--line);border-left:0;border-radius:0 11px 11px 0;
+  background:#fee2e2;color:#b91c1c;font-weight:1000;padding:0
+}
+.free-subtab-add{
+  flex:none;width:38px;height:38px;border:3px solid var(--line);border-radius:11px;
+  background:var(--blue);color:#fff;font-size:20px;font-weight:1000;padding:0
+}
+.free-head,.free-row{
+  grid-template-columns:minmax(0,1.22fr) minmax(0,.92fr) 44px 44px 44px !important;
+  gap:5px !important;
+}
+.free-head{text-align:center}
+.free-head>div:first-child,.free-head>div:nth-child(2){text-align:left}
+.free-action-icon{
+  width:44px;height:40px;padding:0;border:3px solid var(--line);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box
+}
+.free-action-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.free-copy-icon{background:#e5f1ff}
+.free-delete-icon{background:#fee2e2;color:#b91c1c}
+.free-open-icon{background:#fff1ad}
+@media(max-width:430px){
+  .free-head,.free-row{
+    grid-template-columns:minmax(0,1.16fr) minmax(0,.88fr) 38px 38px 38px !important;
+    gap:4px !important
+  }
+  .free-action-icon{width:38px;height:38px}
+  .free-action-icon svg{width:18px;height:18px}
+  .free-subtab{padding:7px 8px;font-size:12px;max-width:120px}
+  .free-subtab-delete{width:28px}
 }
 </style>
 </head>
@@ -1738,18 +1783,23 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
         <h2>メモ</h2>
         <span class="badge">端末内保存</span>
       </div>
+      <div class="free-subtabs-row">
+        <div class="free-subtabs" id="freeMemoSubtabs"></div>
+        <button class="free-subtab-add" id="freeMemoTabAddBtn" type="button" aria-label="小タブ追加">＋</button>
+      </div>
       <div class="free-toolbar">
         <button class="action" id="freeMemoAddBtn" type="button">＋ 追加</button>
         <button class="action" id="freeMemoExportBtn" type="button">CSV出力</button>
       </div>
       <div class="free-head">
-        <div>名称</div>
+        <div>Name</div>
         <div>URL</div>
-        <div>コピー</div>
-        <div>削除</div>
+        <div>Copy</div>
+        <div>Delete</div>
+        <div>Open</div>
       </div>
       <div id="freeMemoRows"></div>
-      <div class="note">名称とURLを自由に登録できます。入力欄は長押しで貼り付け・コピー・全選択が使えます。「コピー」でURLをクリップボードへコピーし、「削除」でその行を削除します。変更内容はこの端末内に保存されます。</div>
+      <div class="note">小タブはタップで切替、長押しで名称変更、×で削除できます。URL欄の内容がURLの場合は右端のOpenボタンから開けます。変更内容はこの端末内に保存されます。</div>
     </div>
   </section>
 
@@ -3310,38 +3360,119 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 
 <script>
-/* ===== 個人版 v3.4.8: フリーメモ ===== */
+/* ===== 個人版 v3.6.9: メモ小タブ ===== */
 (function(){
-  const KEY='the_fool_head_free_memo_v1';
+  const OLD_KEY='the_fool_head_free_memo_v1';
+  const KEY='the_fool_head_free_memo_tabs_v2';
   const rowsEl=document.getElementById('freeMemoRows');
-  if(!rowsEl)return;
+  const tabsEl=document.getElementById('freeMemoSubtabs');
+  if(!rowsEl||!tabsEl)return;
 
-  let data=load();
+  function uid(){return crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`}
 
-  function uid(){
-    return (crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`);
+  function cleanRow(x){
+    return {id:String(x?.id||uid()),name:String(x?.name||''),url:String(x?.url||'')};
   }
+  function makeTab(title='メモ1',rows=[]){return {id:uid(),title:String(title),rows:rows.map(cleanRow)}}
+
   function load(){
     try{
-      const v=JSON.parse(localStorage.getItem(KEY)||'[]');
-      if(Array.isArray(v))return v.map(x=>({
-        id:String(x?.id||uid()),
-        name:String(x?.name||''),
-        url:String(x?.url||'')
-      }));
+      const saved=JSON.parse(localStorage.getItem(KEY)||'null');
+      if(saved && Array.isArray(saved.tabs) && saved.tabs.length){
+        const tabs=saved.tabs.map((tab,i)=>({
+          id:String(tab?.id||uid()),
+          title:String(tab?.title||`メモ${i+1}`),
+          rows:Array.isArray(tab?.rows)?tab.rows.map(cleanRow):[]
+        }));
+        const active=tabs.some(x=>x.id===saved.active)?saved.active:tabs[0].id;
+        return {tabs,active};
+      }
     }catch(e){}
-    return [];
+    // v1から自動移行：既存メモを最初の小タブへ引き継ぐ
+    let old=[];
+    try{
+      const v=JSON.parse(localStorage.getItem(OLD_KEY)||'[]');
+      if(Array.isArray(v))old=v.map(cleanRow);
+    }catch(e){}
+    const first=makeTab('メモ1',old);
+    const state={tabs:[first],active:first.id};
+    localStorage.setItem(KEY,JSON.stringify(state));
+    return state;
   }
-  function save(){
-    localStorage.setItem(KEY,JSON.stringify(data));
+
+  let state=load();
+  function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+  function currentTab(){
+    let tab=state.tabs.find(x=>x.id===state.active);
+    if(!tab){tab=state.tabs[0];state.active=tab?.id||''}
+    return tab;
   }
   function normalizeUrl(u){
     const s=String(u||'').trim();
     if(!s)return '';
     return /^https?:\/\//i.test(s)?s:'https://'+s;
   }
-  function render(){
+  function copyIcon(){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
+  }
+  function deleteIcon(){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M9 7V4h6v3"></path><path d="M7 7l1 13h8l1-13"></path><path d="M10 11v5M14 11v5"></path></svg>';
+  }
+  function openIcon(){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5"></path><path d="M19 5l-8 8"></path><path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"></path></svg>';
+  }
+
+  function renderTabs(){
+    tabsEl.innerHTML='';
+    state.tabs.forEach(tab=>{
+      const wrap=document.createElement('div');
+      wrap.className='free-subtab-item';
+
+      const btn=document.createElement('button');
+      btn.className='free-subtab'+(tab.id===state.active?' active':'');
+      btn.type='button';
+      btn.textContent=tab.title;
+      btn.title='タップで切替・長押しで名称変更';
+      btn.onclick=()=>{state.active=tab.id;save();render()};
+
+      let timer=null,moved=false;
+      const start=()=>{moved=false;timer=setTimeout(()=>{
+        timer=null;
+        const name=prompt('小タブ名を入力してください。',tab.title);
+        if(name!==null && name.trim()){tab.title=name.trim().slice(0,30);save();renderTabs()}
+      },650)};
+      const cancel=()=>{if(timer){clearTimeout(timer);timer=null}};
+      btn.addEventListener('touchstart',start,{passive:true});
+      btn.addEventListener('touchmove',()=>{moved=true;cancel()},{passive:true});
+      btn.addEventListener('touchend',cancel,{passive:true});
+      btn.addEventListener('touchcancel',cancel,{passive:true});
+      btn.addEventListener('mousedown',start);
+      btn.addEventListener('mouseup',cancel);
+      btn.addEventListener('mouseleave',cancel);
+
+      const del=document.createElement('button');
+      del.className='free-subtab-delete';
+      del.type='button';
+      del.textContent='×';
+      del.setAttribute('aria-label','小タブ削除');
+      del.onclick=(e)=>{
+        e.stopPropagation();
+        if(state.tabs.length===1){alert('小タブは最低1つ必要です。');return}
+        if(!confirm(`「${tab.title}」を削除しますか？\nこの小タブ内のメモも削除されます。`))return;
+        const i=state.tabs.findIndex(x=>x.id===tab.id);
+        state.tabs.splice(i,1);
+        if(state.active===tab.id)state.active=state.tabs[Math.max(0,i-1)]?.id||state.tabs[0].id;
+        save();render();
+      };
+      wrap.append(btn,del);
+      tabsEl.appendChild(wrap);
+    });
+  }
+
+  function renderRows(){
     rowsEl.innerHTML='';
+    const tab=currentTab();
+    const data=tab?.rows||[];
     if(!data.length){
       const empty=document.createElement('div');
       empty.className='free-empty';
@@ -3354,80 +3485,76 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       row.className='free-row';
 
       const name=document.createElement('input');
-      name.className='free-name';
-      name.type='text';
-      name.placeholder='名称';
-      name.value=item.name;
+      name.className='free-name';name.type='text';name.placeholder='Name';name.value=item.name;
       name.addEventListener('input',()=>{item.name=name.value;save()});
 
       const url=document.createElement('input');
-      url.className='free-url';
-      url.type='text';
-      url.inputMode='url';
-      url.placeholder='https://...';
-      url.value=item.url;
+      url.className='free-url';url.type='text';url.inputMode='url';url.placeholder='https://...';url.value=item.url;
       url.addEventListener('input',()=>{item.url=url.value;save()});
 
-      const open=document.createElement('button');
-      open.className='free-open';
-      open.type='button';
-      open.textContent='コピー';
-      open.addEventListener('click',async()=>{
+      const copy=document.createElement('button');
+      copy.className='free-action-icon free-copy-icon';copy.type='button';copy.innerHTML=copyIcon();
+      copy.setAttribute('aria-label','コピー');copy.title='Copy';
+      copy.onclick=async()=>{
         const value=String(item.url||'').trim();
-        if(!value){alert('URLを入力してください。');return}
+        if(!value)return;
         try{
           await navigator.clipboard.writeText(value);
-          const before=open.textContent;
-          open.textContent='✓';
           if(navigator.vibrate)navigator.vibrate(20);
-          setTimeout(()=>open.textContent=before,650);
         }catch(e){
-          const ta=document.createElement('textarea');
-          ta.value=value;
-          ta.style.position='fixed';
-          ta.style.opacity='0';
-          document.body.appendChild(ta);
-          ta.select();
-          try{document.execCommand('copy');open.textContent='✓';setTimeout(()=>open.textContent='コピー',650)}
-          finally{ta.remove()}
+          const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';
+          document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}finally{ta.remove()}
         }
-      });
+      };
 
       const del=document.createElement('button');
-      del.className='free-delete';
-      del.type='button';
-      del.textContent='削除';
-      del.addEventListener('click',()=>{
+      del.className='free-action-icon free-delete-icon';del.type='button';del.innerHTML=deleteIcon();
+      del.setAttribute('aria-label','削除');del.title='Delete';
+      del.onclick=()=>{
         if(confirm(`「${item.name||'名称なし'}」を削除しますか？`)){
-          data.splice(index,1);
-          save();
-          render();
+          data.splice(index,1);save();renderRows();
         }
-      });
+      };
 
-      row.append(name,url,open,del);
+      const open=document.createElement('button');
+      open.className='free-action-icon free-open-icon';open.type='button';open.innerHTML=openIcon();
+      open.setAttribute('aria-label','開く');open.title='Open';
+      open.onclick=()=>{
+        const value=normalizeUrl(item.url);
+        if(!value)return;
+        try{window.open(value,'_blank','noopener,noreferrer')}catch(e){location.href=value}
+      };
+
+      row.append(name,url,copy,del,open);
       rowsEl.appendChild(row);
     });
   }
 
+  function render(){renderTabs();renderRows()}
+
+  document.getElementById('freeMemoTabAddBtn')?.addEventListener('click',()=>{
+    const title=prompt('新しい小タブ名を入力してください。',`メモ${state.tabs.length+1}`);
+    if(title===null)return;
+    const tab=makeTab(title.trim()||`メモ${state.tabs.length+1}`,[]);
+    state.tabs.push(tab);state.active=tab.id;save();render();
+  });
+
   document.getElementById('freeMemoAddBtn')?.addEventListener('click',()=>{
-    data.push({id:uid(),name:'',url:''});
-    save();render();
+    const tab=currentTab();if(!tab)return;
+    tab.rows.push({id:uid(),name:'',url:''});save();renderRows();
     setTimeout(()=>rowsEl.querySelector('.free-row:last-child .free-name')?.focus(),30);
   });
 
   document.getElementById('freeMemoExportBtn')?.addEventListener('click',()=>{
-    const rows=[['名称','URL'],...data.map(x=>[x.name,x.url])];
+    const tab=currentTab();if(!tab)return;
+    const rows=[['Name','URL'],...tab.rows.map(x=>[x.name,x.url])];
     const csv=rows.map(r=>r.map(v=>{
-      const s=String(v??'');
-      return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
+      const s=String(v??'');return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
     }).join(',')).join('\r\n');
     const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
-    const u=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=u;a.download='フリーメモ.csv';
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(u),1000);
+    const u=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=u;a.download=`${tab.title||'メモ'}.csv`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
   });
 
   render();
@@ -3813,7 +3940,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 
 <script>
-/* ===== 個人版 v3.6.8: Gアカウント管理 ===== */
+/* ===== 個人版 v3.6.9: Gアカウント管理 ===== */
 const GACC_KEY='adventure_gaccount_v1';
 const GACC_VIEW_KEY='adventure_gaccount_visible_v1';
 const GACC_API='/api/gaccounts';
