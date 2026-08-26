@@ -1589,6 +1589,78 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   .free-subtab-delete{width:28px}
 }
 </style>
+
+<!-- ===== v3.7 speed-first bottom UI assets ===== -->
+<link rel="preload" as="image" href="./icons/nav-win.webp" type="image/webp">
+<link rel="preload" as="image" href="./icons/nav-finance.webp" type="image/webp">
+<link rel="preload" as="image" href="./icons/nav-action.webp" type="image/webp">
+<link rel="preload" as="image" href="./icons/nav-phrase.webp" type="image/webp">
+<link rel="preload" as="image" href="./icons/nav-memo.webp" type="image/webp">
+<link rel="preload" as="image" href="./icons/nav-gacc.webp" type="image/webp">
+<style id="tfhSpeedUiCss">
+/* speed-first: no decorative animation; keep existing feature/data logic intact */
+:root{--tfh-nav-h:100px;--tfh-sync-h:62px}
+body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) + 18px)!important}
+
+/* Existing duplicate server / management controls are moved to the common lower UI. */
+#clipRefreshBtn,#clipSendBtn,#phraseRefreshBtn,#phraseSendBtn,
+#gaccDownloadBtn,#gaccUploadBtn,#freeMemoExportBtn,#exportFinance,#clearFinance,
+#backupBtn,#restoreBtn,#navLayoutBtn{display:none!important}
+
+.bottomnav{z-index:120!important;transition:none!important}
+.bottomnav-row{gap:4px!important}
+.bottomnav .navbtn{
+  min-height:54px!important;padding:4px 2px!important;border-width:2px!important;border-radius:12px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:1px!important;
+  background:#fff!important;color:#263238!important;box-shadow:none!important;transition:none!important;overflow:hidden!important
+}
+.bottomnav .navbtn.active{
+  background:#fffbe8!important;color:#b77900!important;border-color:#e5b800!important;
+  box-shadow:inset 0 0 0 1px #ffd84d!important
+}
+.tfh-nav-icon{width:34px;height:34px;display:block;object-fit:contain;flex:none;pointer-events:none}
+.tfh-nav-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:1.05;font-weight:1000;pointer-events:none}
+@media(max-width:430px){
+ .bottomnav .navbtn{min-height:52px!important;padding:3px 1px!important}
+ .tfh-nav-icon{width:31px;height:31px}.tfh-nav-label{font-size:9px}
+}
+
+.tfh-syncbar{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:var(--tfh-nav-h);z-index:119;
+  width:min(760px,100%);min-height:58px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+  display:grid;grid-template-columns:minmax(0,1fr) 78px 78px 44px;gap:6px;align-items:center;
+  background:rgba(255,255,255,.97);border-top:2px solid var(--line);box-shadow:0 -2px 8px rgba(0,0,0,.08)
+}
+.tfh-sync-status{min-width:0;font-size:11px;line-height:1.2;font-weight:1000;color:#08782a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tfh-sync-status.dirty{color:#b45309}.tfh-sync-status.local{color:#667781}.tfh-sync-status.err{color:#c62828}
+.tfh-sync-btn,.tfh-manage-btn{min-width:0;min-height:44px;border:2px solid var(--line);border-radius:11px;background:#fff;color:#263238;padding:6px 4px;font-size:12px;font-weight:1000;box-shadow:none;transition:none}
+.tfh-sync-btn.send{background:#e5f1ff}.tfh-sync-btn:disabled{opacity:.38;cursor:default}
+.tfh-manage-btn{font-size:19px;padding:0}
+@media(max-width:360px){.tfh-syncbar{grid-template-columns:minmax(0,1fr) 67px 67px 42px;gap:4px}.tfh-sync-btn{font-size:11px}}
+
+.tfh-manage-sheet{
+  position:fixed;z-index:160;left:50%;transform:translateX(-50%);
+  bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) + 8px);width:min(430px,calc(100% - 18px));
+  display:none;background:var(--panel);border:3px solid var(--line);border-radius:16px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.28)
+}
+.tfh-manage-sheet.show{display:block}.tfh-manage-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.tfh-manage-head strong{font-size:15px}.tfh-manage-close{width:36px;height:36px;border:2px solid var(--line);border-radius:50%;background:#fff;font-weight:1000;padding:0}
+.tfh-manage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.tfh-manage-action{min-height:43px;border:2px solid var(--line);border-radius:10px;background:#fff;padding:7px 5px;font-size:12px;font-weight:1000}
+.tfh-manage-action.wide{grid-column:1/-1}.tfh-manage-action.danger{background:#fee2e2;color:#991b1b}
+.tfh-manage-note{margin-top:7px;font-size:10px;line-height:1.4;color:var(--muted);font-weight:800}
+
+.tfh-toast{
+ position:fixed;z-index:220;left:50%;transform:translateX(-50%);bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) + 12px);
+ max-width:calc(100% - 28px);display:none;background:#111;color:#fff;border-radius:999px;padding:9px 14px;font-size:12px;font-weight:1000;text-align:center
+}
+.tfh-toast.show{display:block}.tfh-toast.err{background:#991b1b}
+
+.tfh-danger-modal{position:fixed;inset:0;z-index:240;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:18px}
+.tfh-danger-modal.show{display:flex}.tfh-danger-box{width:min(430px,96vw);background:var(--panel);border:4px solid var(--line);border-radius:18px;padding:14px}
+.tfh-danger-box h3{margin:0 0 8px}.tfh-danger-box p{font-size:12px;line-height:1.55;color:var(--muted);font-weight:800}.tfh-danger-confirm{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tfh-danger-confirm button{min-height:44px;border:3px solid var(--line);border-radius:11px;font-weight:1000}.tfh-danger-cancel{background:#fff}.tfh-danger-delete{background:#fee2e2;color:#991b1b}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1843,15 +1915,37 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
 
 </div>
 
+
+<!-- ===== common lower sync / management UI ===== -->
+<div id="tfhManageSheet" class="tfh-manage-sheet" aria-hidden="true">
+  <div class="tfh-manage-head"><strong id="tfhManageTitle">管理</strong><button id="tfhManageClose" class="tfh-manage-close" type="button" aria-label="閉じる">×</button></div>
+  <div id="tfhManageGrid" class="tfh-manage-grid"></div>
+  <div class="tfh-manage-note">危険な削除操作は、この管理メニュー内からさらに確認して実行します。</div>
+</div>
+<div id="tfhSyncBar" class="tfh-syncbar">
+  <div id="tfhSyncStatus" class="tfh-sync-status">✓ 同期状態を確認中</div>
+  <button id="tfhSyncGet" class="tfh-sync-btn" type="button">☁ 取得</button>
+  <button id="tfhSyncSend" class="tfh-sync-btn send" type="button">☁ 転送</button>
+  <button id="tfhManageOpen" class="tfh-manage-btn" type="button" aria-label="管理">⚙</button>
+</div>
+<div id="tfhToast" class="tfh-toast" role="status" aria-live="polite"></div>
+<div id="tfhDangerModal" class="tfh-danger-modal" aria-hidden="true">
+ <div class="tfh-danger-box">
+  <h3>端末内の全データ削除</h3>
+  <p>この端末に保存している「当選管理・収支・動作記録の下書き・定型文・メモ・Gアカウント・表示設定」を削除します。サーバー上のデータは削除しません。実行後は元に戻せません。</p>
+  <div class="tfh-danger-confirm"><button id="tfhDangerCancel" class="tfh-danger-cancel" type="button">キャンセル</button><button id="tfhDangerDelete" class="tfh-danger-delete" type="button">削除を続ける</button></div>
+ </div>
+</div>
+
 <nav class="bottomnav">
   <button id="navLayoutBtn" class="nav-layout-launch" type="button">配置変更</button>
   
- <button class="navbtn" data-view="clearView">✓ 当選管理</button>
- <button class="navbtn" data-view="financeView">￥ 収支</button>
- <button class="navbtn active" data-view="clipboardView">▣ 動作記録</button>
- <button class="navbtn" data-view="phraseView">▤ 定型文</button>
- <button class="navbtn" data-view="freeMemoView">メモ</button>
- <button class="navbtn" data-view="gAccountView">Gアカウント</button>
+ <button class="navbtn" data-view="clearView"><img class="tfh-nav-icon" src="./icons/nav-win.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">当選</span></button>
+ <button class="navbtn" data-view="financeView"><img class="tfh-nav-icon" src="./icons/nav-finance.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">収支</span></button>
+ <button class="navbtn active" data-view="clipboardView"><img class="tfh-nav-icon" src="./icons/nav-action.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">動作</span></button>
+ <button class="navbtn" data-view="phraseView"><img class="tfh-nav-icon" src="./icons/nav-phrase.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">定型</span></button>
+ <button class="navbtn" data-view="freeMemoView"><img class="tfh-nav-icon" src="./icons/nav-memo.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">メモ</span></button>
+ <button class="navbtn" data-view="gAccountView"><img class="tfh-nav-icon" src="./icons/nav-gacc.webp" alt="" width="34" height="34" loading="eager" decoding="async"><span class="tfh-nav-label">G垢</span></button>
 
 </nav>
 <div id="navDragToast" class="nav-drag-toast">タブを移動中</div>
@@ -4068,6 +4162,192 @@ async function executeGaccServer(action){
 document.getElementById('gaccUploadBtn')?.addEventListener('click',()=>executeGaccServer('upload').catch(e=>setGaccStatus(e.message,'err')));
 document.getElementById('gaccDownloadBtn')?.addEventListener('click',()=>executeGaccServer('download').catch(e=>setGaccStatus(e.message,'err')));
 renderGAccounts();
+</script>
+
+
+<script id="tfhSpeedUiJs">
+/* ===== v3.7 speed-first common lower UI ===== */
+(function(){
+  const nav=document.querySelector('.bottomnav');
+  const bar=document.getElementById('tfhSyncBar');
+  const status=document.getElementById('tfhSyncStatus');
+  const getBtn=document.getElementById('tfhSyncGet');
+  const sendBtn=document.getElementById('tfhSyncSend');
+  const manageOpen=document.getElementById('tfhManageOpen');
+  const manageSheet=document.getElementById('tfhManageSheet');
+  const manageClose=document.getElementById('tfhManageClose');
+  const manageGrid=document.getElementById('tfhManageGrid');
+  const manageTitle=document.getElementById('tfhManageTitle');
+  const toast=document.getElementById('tfhToast');
+  const dangerModal=document.getElementById('tfhDangerModal');
+  if(!nav||!bar||!status||!getBtn||!sendBtn||!manageOpen||!manageSheet||!manageGrid)return;
+
+  document.body.classList.add('tfh-ui-ready');
+  const UI_KEY='the_fool_head_sync_ui_v1';
+  const serverViews=new Set(['clipboardView','phraseView','gAccountView']);
+  let syncUi={dirty:{},last:{}};
+  try{syncUi={dirty:{},last:{},...(JSON.parse(localStorage.getItem(UI_KEY)||'{}')||{})};syncUi.dirty=syncUi.dirty||{};syncUi.last=syncUi.last||{}}catch(e){}
+  const saveUi=()=>{try{localStorage.setItem(UI_KEY,JSON.stringify(syncUi))}catch(e){}};
+  const activeView=()=>document.querySelector('.view.active')?.id||'clipboardView';
+  const timeText=(iso)=>{if(!iso)return'';const d=new Date(iso);if(Number.isNaN(d.getTime()))return'';return d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})};
+
+  function measure(){
+    const nh=Math.ceil(nav.getBoundingClientRect().height||90);
+    const bh=Math.ceil(bar.getBoundingClientRect().height||58);
+    document.documentElement.style.setProperty('--tfh-nav-h',nh+'px');
+    document.documentElement.style.setProperty('--tfh-sync-h',bh+'px');
+  }
+  if('ResizeObserver' in window){new ResizeObserver(measure).observe(nav);new ResizeObserver(measure).observe(bar)}
+  addEventListener('resize',measure,{passive:true});setTimeout(measure,0);
+
+  function showToast(msg,type=''){
+    if(!msg)return;toast.textContent=msg;toast.className='tfh-toast show'+(type?' '+type:'');
+    clearTimeout(showToast.t);showToast.t=setTimeout(()=>{toast.className='tfh-toast'},1200);
+  }
+
+  function setDirty(view=activeView()){
+    if(!serverViews.has(view))return;
+    syncUi.dirty[view]=true;saveUi();renderSync();
+  }
+  function setClean(view,iso=new Date().toISOString()){
+    syncUi.dirty[view]=false;syncUi.last[view]=iso;saveUi();renderSync();
+  }
+  function setClipboardClean(iso){setClean('clipboardView',iso);setClean('phraseView',iso)}
+
+  function renderSync(){
+    const view=activeView();
+    if(!serverViews.has(view)){
+      status.textContent='✓ 端末内保存';status.className='tfh-sync-status local';getBtn.disabled=true;sendBtn.disabled=true;return;
+    }
+    getBtn.disabled=false;sendBtn.disabled=false;
+    if(syncUi.dirty[view]){status.textContent='● 未送信';status.className='tfh-sync-status dirty';return}
+    let iso=syncUi.last[view]||'';
+    if((view==='clipboardView'||view==='phraseView')&&typeof clipState!=='undefined')iso=clipState.updatedAt||iso;
+    if(view==='gAccountView'&&typeof gaccData!=='undefined')iso=gaccData.updatedAt||iso;
+    const t=timeText(iso);status.textContent=t?'✓ 同期済 '+t:'✓ 同期済';status.className='tfh-sync-status';
+  }
+
+  // Keep existing storage/data formats intact; only observe existing save paths.
+  try{
+    if(typeof save==='function'){
+      const oldSave=save;save=function(){const r=oldSave.apply(this,arguments);const v=activeView();if(v==='clearView'||v==='financeView')renderSync();return r};
+    }
+    if(typeof saveXWinData==='function'){
+      const oldX=saveXWinData;saveXWinData=function(){const r=oldX.apply(this,arguments);renderSync();return r};
+    }
+    if(typeof markClipDirtyAndSave==='function'){
+      const oldMark=markClipDirtyAndSave;markClipDirtyAndSave=function(){const r=oldMark.apply(this,arguments);setDirty(activeView());return r};
+    }
+    if(typeof saveGaccData==='function'){
+      const oldG=saveGaccData;saveGaccData=function(){const r=oldG.apply(this,arguments);if(activeView()==='gAccountView')setDirty('gAccountView');return r};
+    }
+  }catch(e){}
+
+  // Free memo is intentionally local-only in the existing build; maintain that behavior.
+  document.getElementById('freeMemoView')?.addEventListener('input',renderSync,true);
+  document.getElementById('freeMemoView')?.addEventListener('change',renderSync,true);
+
+  async function doGet(){
+    const view=activeView();if(!serverViews.has(view))return;
+    if(syncUi.dirty[view]&&!confirm('このタブに未送信の変更があります。サーバーデータで上書きしますか？'))return;
+    manageSheet.classList.remove('show');
+    try{
+      if(view==='clipboardView'||view==='phraseView'){
+        await loadSharedClipboard(false);
+        const st=document.getElementById('clipStatus');
+        if(st?.classList.contains('err'))throw new Error(st.textContent||'取得に失敗しました');
+        const iso=(typeof clipState!=='undefined'&&clipState.updatedAt)||new Date().toISOString();setClipboardClean(iso);
+      }else if(view==='gAccountView'){
+        await executeGaccServer('download');
+        const iso=(typeof gaccData!=='undefined'&&gaccData.updatedAt)||new Date().toISOString();setClean('gAccountView',iso);
+      }
+      showToast('✓ 最新データを取得しました');
+    }catch(e){status.textContent='取得エラー';status.className='tfh-sync-status err';showToast(e.message||'取得に失敗しました','err')}
+  }
+  async function doSend(){
+    const view=activeView();if(!serverViews.has(view))return;
+    manageSheet.classList.remove('show');
+    try{
+      if(view==='clipboardView'||view==='phraseView'){
+        await sendSharedClipboard();
+        const st=document.getElementById('clipStatus');
+        if(st?.classList.contains('err'))throw new Error(st.textContent||'転送に失敗しました');
+        const iso=(typeof clipState!=='undefined'&&clipState.updatedAt)||new Date().toISOString();setClipboardClean(iso);
+      }else if(view==='gAccountView'){
+        await executeGaccServer('upload');
+        const iso=(typeof gaccData!=='undefined'&&gaccData.updatedAt)||new Date().toISOString();setClean('gAccountView',iso);
+      }
+      showToast('✓ サーバーへ転送しました');
+    }catch(e){status.textContent='転送エラー';status.className='tfh-sync-status err';showToast(e.message||'転送に失敗しました','err')}
+  }
+  getBtn.addEventListener('click',doGet);sendBtn.addEventListener('click',doSend);
+
+  const menuDefs={
+    clearView:[
+      ['タブ名変更','renameTab'],['バックアップ保存','backupBtn'],['バックアップ読込','restoreBtn'],['タブ配置変更','navLayoutBtn']
+    ],
+    financeView:[
+      ['CSV読込','csvBtn'],['CSV出力','exportFinance'],['収支データ削除','clearFinance','danger'],['タブ配置変更','navLayoutBtn']
+    ],
+    clipboardView:[
+      ['履歴','clipHistoryBtn'],['表示タブ切替','showMoreTabsBtn'],['＋ フィールド追加','clipAddBtn'],['タブ配置変更','navLayoutBtn']
+    ],
+    phraseView:[
+      ['＋ 定型文追加','phraseAddFieldBtn'],['タブ配置変更','navLayoutBtn']
+    ],
+    freeMemoView:[
+      ['＋ 追加','freeMemoAddBtn'],['CSV出力','freeMemoExportBtn'],['＋ 小タブ','freeMemoTabAddBtn'],['タブ配置変更','navLayoutBtn']
+    ],
+    gAccountView:[['タブ配置変更','navLayoutBtn']]
+  };
+  const titleMap={clearView:'当選管理',financeView:'収支',clipboardView:'動作記録',phraseView:'定型文',freeMemoView:'メモ',gAccountView:'Gアカウント'};
+
+  function renderMenu(){
+    const view=activeView();manageTitle.textContent=(titleMap[view]||'')+'・管理';manageGrid.innerHTML='';
+    (menuDefs[view]||[]).forEach(([label,id,kind])=>{
+      const b=document.createElement('button');b.type='button';b.className='tfh-manage-action'+(kind==='danger'?' danger':'');b.textContent=label;
+      b.addEventListener('click',()=>{
+        manageSheet.classList.remove('show');const target=document.getElementById(id);if(!target){showToast('この操作を開けません','err');return}target.click();
+        if(label.includes('CSV出力'))showToast('✓ CSV出力を開始しました');
+        else if(label.includes('バックアップ保存'))showToast('✓ バックアップ保存を開始しました');
+      });manageGrid.appendChild(b);
+    });
+    const allDelete=document.createElement('button');allDelete.type='button';allDelete.className='tfh-manage-action danger wide';allDelete.textContent='端末内の全データ削除';
+    allDelete.addEventListener('click',()=>{manageSheet.classList.remove('show');dangerModal.classList.add('show');dangerModal.setAttribute('aria-hidden','false')});manageGrid.appendChild(allDelete);
+  }
+  manageOpen.addEventListener('click',()=>{renderMenu();manageSheet.classList.toggle('show');manageSheet.setAttribute('aria-hidden',manageSheet.classList.contains('show')?'false':'true')});
+  manageClose.addEventListener('click',()=>manageSheet.classList.remove('show'));
+  document.addEventListener('pointerdown',e=>{if(manageSheet.classList.contains('show')&&!manageSheet.contains(e.target)&&!manageOpen.contains(e.target))manageSheet.classList.remove('show')});
+
+  document.getElementById('tfhDangerCancel')?.addEventListener('click',()=>{dangerModal.classList.remove('show');dangerModal.setAttribute('aria-hidden','true')});
+  document.getElementById('tfhDangerDelete')?.addEventListener('click',()=>{
+    if(!confirm('最終確認です。この端末内のザ・フールヘッド保存データを削除しますか？\nサーバー上のデータは削除しません。'))return;
+    const exact=['adventure_results_v2','the_fool_head_last_view_v27','the_fool_head_extra_tabs_v27','the_fool_head_device_mode_v2','the_fool_head_share_key_v2','the_fool_head_xwin_local_v1','the_fool_head_free_memo_v1','the_fool_head_free_memo_tabs_v2','the_fool_head_bottom_nav_layout_v2','adventure_gaccount_v1','adventure_gaccount_visible_v1',UI_KEY];
+    exact.forEach(k=>localStorage.removeItem(k));
+    for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i)||'';if(k.startsWith('the_fool_head_clip_draft_v24_'))localStorage.removeItem(k)}
+    location.reload();
+  });
+  dangerModal.addEventListener('click',e=>{if(e.target===dangerModal){dangerModal.classList.remove('show');dangerModal.setAttribute('aria-hidden','true')}});
+
+  // Unified completion feedback for copy controls without changing their existing handlers.
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const txt=(b.textContent||'').trim();
+    if(b.matches('.copy-btn,.phrase-copy,.free-copy-icon')||txt==='コピー'||b.title==='Copy')showToast('✓ コピーしました');
+  },true);
+
+  // Observe active-tab changes from all existing navigation logic.
+  new MutationObserver(()=>{renderSync();manageSheet.classList.remove('show');setTimeout(measure,0)}).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+  document.querySelectorAll('.view').forEach(v=>new MutationObserver(()=>{if(v.classList.contains('active')){renderSync();manageSheet.classList.remove('show')}}).observe(v,{attributes:true,attributeFilter:['class']}));
+
+  // Mark only server-backed tabs as unsent on edits. Local-only tabs remain immediate local save.
+  ['clipboardView','phraseView','gAccountView'].forEach(id=>{
+    const v=document.getElementById(id);if(!v)return;
+    v.addEventListener('input',()=>setDirty(id),true);v.addEventListener('change',()=>setDirty(id),true);
+  });
+
+  renderSync();measure();
+})();
 </script>
 
 </body>
