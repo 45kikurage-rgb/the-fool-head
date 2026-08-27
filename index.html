@@ -1376,6 +1376,11 @@ th{position:sticky;top:0;background:#ffe989;z-index:1}th:first-child,td:first-ch
   padding:8px;
   box-shadow:0 10px 24px rgba(0,0,0,.42);
 }
+.nav-layout-hidden-zone{background:#f3f4f6}
+.nav-layout-preset{
+  width:100%;margin-top:10px;border:3px solid var(--line);border-radius:12px;
+  padding:11px 8px;background:#dff4ff;font-weight:1000
+}
 .nav-layout-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -1958,7 +1963,7 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
       <h2>メインタブの配置変更</h2>
       <button class="nav-layout-close" id="navLayoutCloseBtn" type="button">×</button>
     </div>
-    <p class="nav-layout-note">タブを長押ししたまま、上段・下段の好きな位置へ移動してください。各段のタブは、その段の個数に合わせて横幅いっぱいに均等表示されます。</p>
+    <p class="nav-layout-note">タブを長押ししたまま、上段・下段・非表示の好きな位置へ移動してください。上段・下段のタブは、その段の個数に合わせて横幅いっぱいに均等表示されます。非表示へ移動したタブのデータは削除されません。</p>
 
     <div class="nav-layout-zone" data-layout-zone="top">
       <div class="nav-layout-zone-title">上段</div>
@@ -1969,6 +1974,13 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
       <div class="nav-layout-zone-title">下段</div>
       <div class="nav-layout-items" id="navLayoutBottom"></div>
     </div>
+
+    <div class="nav-layout-zone nav-layout-hidden-zone" data-layout-zone="hidden">
+      <div class="nav-layout-zone-title">非表示</div>
+      <div class="nav-layout-items" id="navLayoutHidden"></div>
+    </div>
+
+    <button class="nav-layout-preset" id="navLayoutActionPhraseOnlyBtn" type="button">動作・定型のみ</button>
 
     <div class="nav-layout-actions">
       <button class="nav-layout-cancel" id="navLayoutCancelBtn" type="button">キャンセル</button>
@@ -3749,10 +3761,11 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   const modal=document.getElementById('navLayoutModal');
   const topEdit=document.getElementById('navLayoutTop');
   const bottomEdit=document.getElementById('navLayoutBottom');
-  if(!nav||!launch||!modal||!topEdit||!bottomEdit)return;
+  const hiddenEdit=document.getElementById('navLayoutHidden');
+  if(!nav||!launch||!modal||!topEdit||!bottomEdit||!hiddenEdit)return;
 
   const KEY='the_fool_head_bottom_nav_layout_v2';
-  let working={top:[],bottom:[]};
+  let working={top:[],bottom:[],hidden:[]};
   let drag=null;
   let timer=null;
   let ghost=null;
@@ -3773,7 +3786,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   function defaultLayout(){
     const views=allViews();
     const split=Math.ceil(views.length/2);
-    return {top:views.slice(0,split),bottom:views.slice(split)};
+    return {top:views.slice(0,split),bottom:views.slice(split),hidden:[]};
   }
 
   function normalizeLayout(layout){
@@ -3781,6 +3794,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const seen=new Set();
     const top=[];
     const bottom=[];
+    const hidden=[];
 
     (layout?.top||[]).forEach(v=>{
       if(views.includes(v)&&!seen.has(v)){seen.add(v);top.push(v)}
@@ -3788,13 +3802,15 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     (layout?.bottom||[]).forEach(v=>{
       if(views.includes(v)&&!seen.has(v)){seen.add(v);bottom.push(v)}
     });
+    (layout?.hidden||[]).forEach(v=>{
+      if(views.includes(v)&&!seen.has(v)){seen.add(v);hidden.push(v)}
+    });
 
     views.forEach(v=>{
       if(!seen.has(v)){seen.add(v);bottom.push(v)}
     });
 
-    // どちらかが空でも許可。1個なら横幅100%になる。
-    return {top,bottom};
+    return {top,bottom,hidden};
   }
 
   function loadLayout(){
@@ -3838,15 +3854,22 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     });
     fixed.bottom.forEach(view=>{
       const btn=tabButtons().find(b=>b.dataset.view===view);
-      if(btn)bottomRow.appendChild(btn);
+      if(btn){btn.classList.remove('nav-layout-user-hidden');btn.style.display='';bottomRow.appendChild(btn)}
     });
-
-    // hiddenボタンを含めても、各行では可視ボタンだけが flex:1 で均等になる。
+    fixed.top.forEach(view=>{
+      const btn=tabButtons().find(b=>b.dataset.view===view);
+      if(btn){btn.classList.remove('nav-layout-user-hidden');btn.style.display=''}
+    });
+    fixed.hidden.forEach(view=>{
+      const btn=tabButtons().find(b=>b.dataset.view===view);
+      if(btn){btn.classList.add('nav-layout-user-hidden');btn.style.display='none'}
+    });
   }
 
   function renderEditor(){
     topEdit.innerHTML='';
     bottomEdit.innerHTML='';
+    hiddenEdit.innerHTML='';
 
     const makeItem=(view)=>{
       const el=document.createElement('div');
@@ -3858,6 +3881,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
     working.top.forEach(v=>topEdit.appendChild(makeItem(v)));
     working.bottom.forEach(v=>bottomEdit.appendChild(makeItem(v)));
+    working.hidden.forEach(v=>hiddenEdit.appendChild(makeItem(v)));
 
     bindItems();
   }
@@ -3906,18 +3930,17 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       if(d<bestD){bestD=d;best=i}
     });
 
-    const topZone=modal.querySelector('[data-layout-zone="top"]');
-    const bottomZone=modal.querySelector('[data-layout-zone="bottom"]');
-    const topR=topZone.getBoundingClientRect();
-    const bottomR=bottomZone.getBoundingClientRect();
+    const zones=['top','bottom','hidden'].map(name=>{
+      const el=modal.querySelector(`[data-layout-zone="${name}"]`);
+      return {name,el,r:el.getBoundingClientRect()};
+    });
 
     let zone=null;
-    if(y>=topR.top&&y<=topR.bottom)zone='top';
-    else if(y>=bottomR.top&&y<=bottomR.bottom)zone='bottom';
-    else{
-      const td=Math.abs(y-(topR.top+topR.height/2));
-      const bd=Math.abs(y-(bottomR.top+bottomR.height/2));
-      zone=td<bd?'top':'bottom';
+    for(const z of zones){
+      if(y>=z.r.top&&y<=z.r.bottom){zone=z.name;break}
+    }
+    if(!zone){
+      zone=zones.sort((a,b)=>Math.abs(y-(a.r.top+a.r.height/2))-Math.abs(y-(b.r.top+b.r.height/2)))[0].name;
     }
 
     return {item:best,zone};
@@ -3975,8 +3998,9 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       // まず両方から削除
       working.top=working.top.filter(v=>v!==view);
       working.bottom=working.bottom.filter(v=>v!==view);
+      working.hidden=working.hidden.filter(v=>v!==view);
 
-      const dest=hit.zone==='top'?working.top:working.bottom;
+      const dest=hit.zone==='top'?working.top:(hit.zone==='hidden'?working.hidden:working.bottom);
 
       if(hit.item && hit.item.dataset.view!==view){
         const targetView=hit.item.dataset.view;
@@ -4014,6 +4038,16 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   launch.addEventListener('click',openEditor);
   document.getElementById('navLayoutCloseBtn')?.addEventListener('click',closeEditor);
   document.getElementById('navLayoutCancelBtn')?.addEventListener('click',closeEditor);
+  document.getElementById('navLayoutActionPhraseOnlyBtn')?.addEventListener('click',()=>{
+    const views=allViews();
+    const action='clipboardView', phrase='phraseView';
+    working={
+      top:[action,phrase].filter(v=>views.includes(v)),
+      bottom:[],
+      hidden:views.filter(v=>v!==action&&v!==phrase)
+    };
+    renderEditor();
+  });
   document.getElementById('navLayoutSaveBtn')?.addEventListener('click',()=>{
     saveLayout(working);
     applyLayout(working);
