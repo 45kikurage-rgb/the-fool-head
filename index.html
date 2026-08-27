@@ -1623,6 +1623,8 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
   background:#fffbe8!important;color:#b77900!important;border-color:#e5b800!important;
   box-shadow:inset 0 0 0 1px #ffd84d!important
 }
+/* 配置変更の「非表示」は speed-first の display:flex!important より優先する */
+.bottomnav .navbtn.nav-layout-user-hidden{display:none!important}
 .tfh-nav-icon{width:34px;height:34px;display:block;object-fit:contain;flex:none;pointer-events:none}
 .tfh-nav-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1;font-weight:1000;letter-spacing:-.2px;margin-top:-1px;pointer-events:none}
 @media(max-width:430px){
@@ -4060,10 +4062,9 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   // 初期配置を適用
   applyLayout(loadLayout());
 
-  // 端末モードで hidden 状態が変わっても、flex が可視数に応じ自動均等。
-  new MutationObserver(()=>{
-    applyLayout(loadLayout());
-  }).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+  // 配置は保存時・起動時にのみ反映する。
+  // class変更を常時監視すると applyLayout 自身のclass変更を再検知して
+  // 保存直後に連続再描画されることがあるため、MutationObserverは使用しない。
 })();
 </script>
 
