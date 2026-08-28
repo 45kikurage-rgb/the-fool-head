@@ -1682,7 +1682,7 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.8</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.9</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -2080,9 +2080,8 @@ function renderTabs(){
    const w=document.createElement('div');w.className='tab-item';
    const b=document.createElement('button');b.className='tab'+(!xWinSubActive&&t.id===data.active?' active':'');b.textContent=t.name;b.dataset.tabId=t.id;
    b.onclick=()=>{xWinSubActive=false;data.active=t.id;save();renderClear()};
-   const r=document.createElement('button');r.className='tab-reset';r.textContent='↺';r.title='このタブをリセット';
-   r.onclick=e=>{e.stopPropagation();if(confirm(`「${t.name}」をリセットしますか？`)){t.done={};save();renderClear()}};
-   w.append(b,r);el.appendChild(w);
+   b.title='長押しで操作メニュー';
+   w.appendChild(b);el.appendChild(w);
  });
 }
 
