@@ -37,6 +37,15 @@ h1{margin:0;font-size:20px;font-weight:1000}.ver{font-size:11px;color:var(--mute
 .tab.active{background:var(--yellow)}
 .tab-reset,.add{border:3px solid var(--line);border-radius:50%;width:37px;height:37px;font-weight:1000}
 .tab-reset{background:var(--red);color:white}.add{background:var(--blue);color:white;font-size:21px}
+.quest-tab-menu{position:fixed;inset:0;z-index:10030;background:rgba(17,24,39,.48);display:none;align-items:flex-end;justify-content:center;padding:14px}
+.quest-tab-menu.show{display:flex}
+.quest-tab-menu-box{width:min(100%,430px);background:#fffdf2;border:3px solid var(--line);border-radius:20px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.28)}
+.quest-tab-menu-title{text-align:center;font-size:17px;font-weight:1000;margin:0 0 11px;overflow-wrap:anywhere}
+.quest-tab-menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.quest-tab-menu-btn{min-height:50px;border:3px solid var(--line);border-radius:13px;background:#fff;font-weight:1000;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.quest-tab-menu-btn.reset{background:#ffe07a}.quest-tab-menu-btn.delete{background:#e84141;color:#fff}
+.quest-tab-menu-btn.cancel{grid-column:1/-1;background:#eef1f4}
+.quest-tab-menu-btn:disabled{opacity:.35;box-shadow:none}
 .toolbar{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0}
 .action{flex:1 1 29%;background:var(--panel)}
 .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px}
@@ -1672,7 +1681,7 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.6</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.7</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -2011,6 +2020,19 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
  <div class="modal-actions"><button class="action" id="cancelName">キャンセル</button><button class="action" id="saveName">保存</button></div>
 </div></div>
 
+<div class="quest-tab-menu" id="questTabMenu" aria-hidden="true">
+ <div class="quest-tab-menu-box" role="dialog" aria-modal="true" aria-labelledby="questTabMenuTitle">
+  <div class="quest-tab-menu-title" id="questTabMenuTitle"></div>
+  <div class="quest-tab-menu-actions">
+   <button class="quest-tab-menu-btn reset" id="questTabMenuReset" type="button">当選リセット</button>
+   <button class="quest-tab-menu-btn delete" id="questTabMenuDelete" type="button">削除</button>
+   <button class="quest-tab-menu-btn" id="questTabMenuLeft" type="button">← 左に移動</button>
+   <button class="quest-tab-menu-btn" id="questTabMenuRight" type="button">右に移動 →</button>
+   <button class="quest-tab-menu-btn cancel" id="questTabMenuCancel" type="button">キャンセル</button>
+  </div>
+ </div>
+</div>
+
 <script>
 const APP_KEY='adventure_results_v2';
 const OLD_KEYS=['clear150_tabs_v1'];
@@ -2055,7 +2077,7 @@ function renderTabs(){
  xw.appendChild(xb);el.appendChild(xw);
  data.tabs.forEach(t=>{
    const w=document.createElement('div');w.className='tab-item';
-   const b=document.createElement('button');b.className='tab'+(!xWinSubActive&&t.id===data.active?' active':'');b.textContent=t.name;
+   const b=document.createElement('button');b.className='tab'+(!xWinSubActive&&t.id===data.active?' active':'');b.textContent=t.name;b.dataset.tabId=t.id;
    b.onclick=()=>{xWinSubActive=false;data.active=t.id;save();renderClear()};
    const r=document.createElement('button');r.className='tab-reset';r.textContent='↺';r.title='このタブをリセット';
    r.onclick=e=>{e.stopPropagation();if(confirm(`「${t.name}」をリセットしますか？`)){t.done={};save();renderClear()}};
@@ -3671,15 +3693,34 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 
 <script>
-/* ===== 個人版 v3.4.8: 当選管理の追加タブを長押し削除 ===== */
+/* ===== 個人版 v3.4.7: 当選管理の小タブ長押し操作メニュー ===== */
 (function(){
   const tabsEl=document.getElementById('tabs');
-  if(!tabsEl)return;
+  const menu=document.getElementById('questTabMenu');
+  if(!tabsEl||!menu)return;
 
   let timer=null;
   let pressedBtn=null;
   let startX=0,startY=0;
   let suppressClick=false;
+  let selectedId='';
+
+  const title=document.getElementById('questTabMenuTitle');
+  const resetBtn=document.getElementById('questTabMenuReset');
+  const deleteBtn=document.getElementById('questTabMenuDelete');
+  const leftBtn=document.getElementById('questTabMenuLeft');
+  const rightBtn=document.getElementById('questTabMenuRight');
+  const cancelBtn=document.getElementById('questTabMenuCancel');
+
+  function selected(){return data.tabs.find(t=>t.id===selectedId)}
+  function closeMenu(){menu.classList.remove('show');menu.setAttribute('aria-hidden','true');selectedId=''}
+  function openMenu(id){
+    const idx=data.tabs.findIndex(t=>t.id===id);if(idx<0)return;
+    selectedId=id;title.textContent=`「${data.tabs[idx].name}」の操作`;
+    leftBtn.disabled=idx===0;rightBtn.disabled=idx===data.tabs.length-1;
+    deleteBtn.disabled=data.tabs.length<=1;
+    menu.classList.add('show');menu.setAttribute('aria-hidden','false');
+  }
 
   function cancel(){
     if(timer){clearTimeout(timer);timer=null}
@@ -3693,9 +3734,8 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     // X当選管理は固定・削除不可
     if(btn.classList.contains('xwin-sub-tab'))return;
 
-    const normalButtons=[...tabsEl.querySelectorAll('.tab:not(.xwin-sub-tab)')];
-    const idx=normalButtons.indexOf(btn);
-    if(idx<0 || !data?.tabs?.[idx])return;
+    const tabId=btn.dataset.tabId;
+    if(!tabId || !data.tabs.some(t=>t.id===tabId))return;
 
     pressedBtn=btn;
     startX=e.clientX;
@@ -3703,34 +3743,11 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
     timer=setTimeout(()=>{
       timer=null;
-      const tab=data.tabs[idx];
-      if(!tab)return;
-
-      // 最後の通常タブ1個は残す
-      if(data.tabs.length<=1){
-        alert('通常タブは最低1個必要なため削除できません。');
-        return;
-      }
-
       suppressClick=true;
       if(navigator.vibrate)navigator.vibrate(25);
-
-      if(confirm(`「${tab.name}」を削除しますか？
-このタブの1〜150の記録も削除されます。`)){
-        const deletingId=tab.id;
-        data.tabs.splice(idx,1);
-
-        if(data.active===deletingId){
-          data.active=data.tabs[Math.max(0,idx-1)]?.id || data.tabs[0]?.id;
-        }
-
-        xWinSubActive=false;
-        save();
-        renderClear();
-      }
-
+      openMenu(tabId);
       setTimeout(()=>suppressClick=false,250);
-    },700);
+    },650);
   },{passive:true});
 
   tabsEl.addEventListener('pointermove',e=>{
@@ -3751,6 +3768,32 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   tabsEl.addEventListener('contextmenu',e=>{
     if(e.target.closest('.tab'))e.preventDefault();
   });
+
+  resetBtn.onclick=()=>{
+    const tab=selected();if(!tab)return closeMenu();
+    if(confirm(`「${tab.name}」の当選状態をすべてリセットしますか？`)){
+      tab.done={};save();closeMenu();renderClear();
+    }
+  };
+  deleteBtn.onclick=()=>{
+    const tab=selected();if(!tab)return closeMenu();
+    if(data.tabs.length<=1){alert('通常タブは最低1個必要なため削除できません。');return}
+    if(!confirm(`「${tab.name}」を削除しますか？\nこのタブの1〜150の記録も削除されます。`))return;
+    const idx=data.tabs.findIndex(t=>t.id===tab.id);if(idx<0)return closeMenu();
+    data.tabs.splice(idx,1);
+    if(data.active===tab.id)data.active=data.tabs[Math.min(idx,data.tabs.length-1)]?.id||data.tabs[0].id;
+    xWinSubActive=false;save();closeMenu();renderClear();
+  };
+  function move(direction){
+    const idx=data.tabs.findIndex(t=>t.id===selectedId);const next=idx+direction;
+    if(idx<0||next<0||next>=data.tabs.length)return;
+    [data.tabs[idx],data.tabs[next]]=[data.tabs[next],data.tabs[idx]];
+    save();closeMenu();renderClear();
+    requestAnimationFrame(()=>tabsEl.querySelector(`[data-tab-id="${CSS.escape(data.active)}"]`)?.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}));
+  }
+  leftBtn.onclick=()=>move(-1);rightBtn.onclick=()=>move(1);
+  cancelBtn.onclick=closeMenu;
+  menu.addEventListener('click',e=>{if(e.target===menu)closeMenu()});
 })();
 </script>
 
