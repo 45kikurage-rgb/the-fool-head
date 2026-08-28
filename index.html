@@ -35,6 +35,7 @@ h1{margin:0;font-size:20px;font-weight:1000}.ver{font-size:11px;color:var(--mute
 .tab,.pill,.action{border:3px solid var(--line);background:white;border-radius:12px;padding:8px 11px;font-weight:900;
  box-shadow:0 3px 0 rgba(0,0,0,.15)}
 .tab.active{background:var(--yellow)}
+.tab{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .tab-reset,.add{border:3px solid var(--line);border-radius:50%;width:37px;height:37px;font-weight:1000}
 .tab-reset{background:var(--red);color:white}.add{background:var(--blue);color:white;font-size:21px}
 .quest-tab-menu{position:fixed;inset:0;z-index:10030;background:rgba(17,24,39,.48);display:none;align-items:flex-end;justify-content:center;padding:14px}
@@ -1681,7 +1682,7 @@ body.tfh-ui-ready .app{padding-bottom:calc(var(--tfh-nav-h) + var(--tfh-sync-h) 
 <body>
 <div class="app">
  <div class="header">
-   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.7</div></div><div class="badge" id="storageBadge">即時保存</div></div>
+   <div class="titlebar"><div><h1>冒険の書</h1><div class="ver">個人版 v3.4.8</div></div><div class="badge" id="storageBadge">即時保存</div></div>
  </div>
 
  <section id="clearView" class="view">
@@ -3693,7 +3694,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 
 <script>
-/* ===== 個人版 v3.4.7: 当選管理の小タブ長押し操作メニュー ===== */
+/* ===== 個人版 v3.4.8: Android対応・当選管理の小タブ長押し操作メニュー ===== */
 (function(){
   const tabsEl=document.getElementById('tabs');
   const menu=document.getElementById('questTabMenu');
@@ -3727,36 +3728,47 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     pressedBtn=null;
   }
 
-  tabsEl.addEventListener('pointerdown',e=>{
-    const btn=e.target.closest('.tab');
-    if(!btn)return;
-
-    // X当選管理は固定・削除不可
-    if(btn.classList.contains('xwin-sub-tab'))return;
-
+  function startLongPress(btn,x,y){
+    cancel();
+    if(!btn||btn.classList.contains('xwin-sub-tab'))return;
     const tabId=btn.dataset.tabId;
-    if(!tabId || !data.tabs.some(t=>t.id===tabId))return;
-
-    pressedBtn=btn;
-    startX=e.clientX;
-    startY=e.clientY;
-
+    if(!tabId||!data.tabs.some(t=>t.id===tabId))return;
+    pressedBtn=btn;startX=x;startY=y;
     timer=setTimeout(()=>{
-      timer=null;
-      suppressClick=true;
+      timer=null;suppressClick=true;
       if(navigator.vibrate)navigator.vibrate(25);
       openMenu(tabId);
-      setTimeout(()=>suppressClick=false,250);
-    },650);
+      setTimeout(()=>suppressClick=false,500);
+    },500);
+  }
+
+  tabsEl.addEventListener('pointerdown',e=>{
+    // Androidなどのタッチ端末は、下のtouchイベントで確実に処理する
+    if(e.pointerType==='touch')return;
+    const btn=e.target.closest('.tab');
+    startLongPress(btn,e.clientX,e.clientY);
   },{passive:true});
 
   tabsEl.addEventListener('pointermove',e=>{
     if(!pressedBtn)return;
-    if(Math.hypot(e.clientX-startX,e.clientY-startY)>9)cancel();
+    if(Math.hypot(e.clientX-startX,e.clientY-startY)>18)cancel();
   },{passive:true});
 
   tabsEl.addEventListener('pointerup',cancel);
   tabsEl.addEventListener('pointercancel',cancel);
+
+  // 横スクロール領域でpointercancelになるAndroid Chrome向けのタッチ処理
+  tabsEl.addEventListener('touchstart',e=>{
+    if(!e.touches||e.touches.length!==1)return;
+    const btn=e.target.closest('.tab');
+    startLongPress(btn,e.touches[0].clientX,e.touches[0].clientY);
+  },{passive:true});
+  tabsEl.addEventListener('touchmove',e=>{
+    if(!pressedBtn||!e.touches||e.touches.length!==1)return;
+    if(Math.hypot(e.touches[0].clientX-startX,e.touches[0].clientY-startY)>18)cancel();
+  },{passive:true});
+  tabsEl.addEventListener('touchend',cancel,{passive:true});
+  tabsEl.addEventListener('touchcancel',cancel,{passive:true});
 
   tabsEl.addEventListener('click',e=>{
     if(suppressClick){
