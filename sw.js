@@ -1,5 +1,5 @@
-const CACHE='the-fool-head-personal-v3.5.0-icon-white';
-const ASSETS=['./','./index.html','./manifest.json','./icon-any.png','./icon-maskable.png','./quest_icon_chest.png'];
+const CACHE="the-fool-head-20260914-white-splash";
+const ASSETS=['./','./index.html','./manifest.json?v=20260914-white-splash','./icon-any-192.png?v=20260914-white-splash','./icon-any.png?v=20260914-white-splash','./icon-maskable.png?v=20260914-white-splash','./quest_icon_chest.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
