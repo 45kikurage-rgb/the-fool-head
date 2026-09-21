@@ -3180,7 +3180,13 @@ async function clipApi(method,payload){
     return data;
   };
   try{
-    return await request(SHARED_CLIPBOARD_API);
+    const shared=await request(SHARED_CLIPBOARD_API);
+    // 初回移行前の共通APIは空なので、取得時だけ現行APIのデータを表示する。
+    // 一度「送信」されると updatedAt が入り、以後は共通APIを使用する。
+    if(method==='GET' && !shared.updatedAt){
+      return await request(LEGACY_CLIPBOARD_API);
+    }
+    return shared;
   }catch(primaryError){
     // 新しい共通APIの公開確認が終わるまで、現行APIを安全網として残す。
     try{return await request(LEGACY_CLIPBOARD_API)}catch(legacyError){throw primaryError}
