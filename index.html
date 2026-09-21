@@ -2741,6 +2741,8 @@ function toggleExtraTabs(){
 // ===== 個人版 v3.4.1: 端末モード + 共有クリップボード =====
 const DEVICE_MODE_KEY='the_fool_head_device_mode_v2';
 const SHARE_KEY_KEY='the_fool_head_share_key_v2';
+const SHARED_CLIPBOARD_API='https://the-fool-shared-api.45kikurage.workers.dev/api/clipboard';
+const LEGACY_CLIPBOARD_API='/api/clipboard';
 const DEFAULT_CLIP_FIELDS=5;
 const CLIP_DRAFT_PREFIX='the_fool_head_clip_draft_v24_';
 let clipState={fields:[],memo:'',phrases:[],history:[],updatedAt:''};
@@ -3163,18 +3165,26 @@ function markClipDirtyAndSave(){
 async function clipApi(method,payload){
   const key=getShareKey();
   if(key.length<8)throw new Error('共有キーを設定してください');
-  const res=await fetch('/api/clipboard',{
-    method,
-    headers:{
-      'Content-Type':'application/json',
-      'X-Share-Key':key
-    },
-    body:payload?JSON.stringify(payload):undefined,
-    cache:'no-store'
-  });
-  const data=await res.json().catch(()=>({}));
-  if(!res.ok)throw new Error(data.error||`通信エラー ${res.status}`);
-  return data;
+  const request=async url=>{
+    const res=await fetch(url,{
+      method,
+      headers:{
+        'Content-Type':'application/json',
+        'X-Share-Key':key
+      },
+      body:payload?JSON.stringify(payload):undefined,
+      cache:'no-store'
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||`通信エラー ${res.status}`);
+    return data;
+  };
+  try{
+    return await request(SHARED_CLIPBOARD_API);
+  }catch(primaryError){
+    // 新しい共通APIの公開確認が終わるまで、現行APIを安全網として残す。
+    try{return await request(LEGACY_CLIPBOARD_API)}catch(legacyError){throw primaryError}
+  }
 }
 async function loadSharedClipboard(silent=false){
   if(!getShareKey()){
